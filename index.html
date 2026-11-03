@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f3ee">
+<meta name="referrer" content="no-referrer">
+<title>桥 · Ponte</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+@font-face{font-family:"Source Sans 3";font-weight:400;font-display:swap;src:url(fonts/source-sans-3-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Source Sans 3";font-weight:400;font-display:swap;src:url(fonts/source-sans-3-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Source Sans 3";font-weight:600;font-display:swap;src:url(fonts/source-sans-3-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Source Sans 3";font-weight:600;font-display:swap;src:url(fonts/source-sans-3-latin-ext-600-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Source Serif 4";font-weight:600;font-display:swap;src:url(fonts/source-serif-4-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122,U+FEFF,U+FFFD}
+@font-face{font-family:"Source Serif 4";font-weight:600;font-display:swap;src:url(fonts/source-serif-4-latin-ext-600-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+1E00-1E9F,U+1EF2-1EFF,U+20A0-20AB,U+20AD-20C0,U+2C60-2C7F,U+A720-A7FF}
+:root{
+  --bg:#f6f3ee;--card:#fff;--sunk:#efebe4;--ink:#1f2a2e;--muted:#69736f;--line:#e2ddd4;
+  --acc:#2c6b64;--acc-soft:#e3efec;--zh:#b4492f;--zh-soft:#f7e6df;--pt:#2c6b64;--pt-soft:#e3efec;--warn:#9a5b12;
+  --f-ui:"Source Sans 3",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  --f-head:"Source Serif 4","Songti SC","Noto Serif CJK SC",Georgia,serif;
+  --r:16px;
+}
+@media (prefers-color-scheme:dark){:root{--bg:#141a1c;--card:#1c2427;--sunk:#11171a;--ink:#e6ecea;--muted:#9aa6a2;--line:#2c373a;--acc:#6fb8ad;--acc-soft:#203532;--zh:#e48a6f;--zh-soft:#3a2620;--pt:#6fb8ad;--pt-soft:#203532}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15.5px;line-height:1.55;-webkit-text-size-adjust:100%}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+a{color:var(--acc)}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px calc(28px + env(safe-area-inset-bottom))}
+header.top{display:flex;align-items:center;gap:12px;margin:2px 0 14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand img{width:34px;height:34px}
+.brand h1{font-family:var(--f-head);font-size:21px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand .sub{font-size:12.5px;color:var(--muted)}
+.sp{flex:1}
+.seg{display:inline-flex;background:var(--sunk);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;border-radius:999px;padding:4px 11px;font-size:13px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 16px;font-size:14.5px;display:inline-flex;align-items:center;gap:7px;line-height:1.2}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.danger{background:#b23b2a;border-color:#b23b2a;color:#fff}
+.btn.sm{padding:5px 12px;font-size:13.5px}
+.btn.ghost{border-color:transparent;background:none}
+.btn svg{width:18px;height:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.muted{color:var(--muted)}.small{font-size:13px}
+input[type=text],input[type=password],textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:16px;min-width:0}
+textarea{resize:vertical;min-height:90px;line-height:1.6}
+label.f{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+.err{color:#b23b2a;font-size:13.5px;min-height:1.2em;margin-top:8px}
+/* gate */
+.gate{max-width:460px;margin:7vh auto 0}
+.gate h2{font-family:var(--f-head);font-weight:600;font-size:24px;margin:4px 0 6px}
+.gate .lead{color:var(--muted);margin:0 0 6px}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pick button{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px;text-align:left}
+.pick button[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft)}
+.pick b{display:block;font-size:15px}.pick span{font-size:12.5px;color:var(--muted)}
+.linkbox{display:flex;gap:8px;margin-top:6px}.linkbox input{font-size:13.5px}
+.chk{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:14px}
+/* room */
+.grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:grid;gap:14px}
+.vid{position:relative;background:#0f1517;border-radius:var(--r);overflow:hidden;aspect-ratio:16/10;display:grid;place-items:center}
+.vid video#rv{width:100%;height:100%;object-fit:cover;background:#0f1517}
+.vid video#lv{position:absolute;right:12px;bottom:68px;width:26%;max-width:200px;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:2px solid rgba(255,255,255,.7);transform:scaleX(-1);background:#222;z-index:2}
+.vid video#lv.screen{transform:none}
+.vid .idle{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#e6ecea;padding:20px;z-index:1}
+.vid .idle .who{font-size:14px;color:#aab6b2;margin-top:6px}
+.vid .bar{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:10px;padding:10px;background:linear-gradient(transparent,rgba(0,0,0,.55));z-index:3}
+.cb{width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center}
+.cb:hover{background:rgba(255,255,255,.26)}.cb svg{width:22px;height:22px}
+.cb.off{background:#fff;color:#1f2a2e}.cb.end{background:#c0392b}
+.vid .st{position:absolute;left:12px;top:12px;font-size:12.5px;color:#fff;background:rgba(0,0,0,.45);padding:3px 10px;border-radius:999px;z-index:3}
+.vid .rname{position:absolute;left:12px;bottom:70px;font-size:13px;color:#fff;background:rgba(0,0,0,.45);padding:2px 9px;border-radius:999px;z-index:3}
+.people{display:flex;gap:8px;flex-wrap:wrap;font-size:13px}
+.people span{background:var(--sunk);border-radius:999px;padding:3px 10px}
+.people span.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#3c9a5f;margin-right:6px;vertical-align:1px}
+/* timer */
+.tm{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.tm h3{margin:0;font-size:17px}
+.tm .big{font-variant-numeric:tabular-nums;font-size:30px;font-weight:600;letter-spacing:.02em}
+.phase{display:inline-block;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px}
+.phase.zh{background:var(--zh-soft);color:var(--zh)}.phase.pt{background:var(--pt-soft);color:var(--pt)}
+.track{display:flex;height:8px;border-radius:999px;overflow:hidden;background:var(--sunk);margin:12px 0 6px}
+.track i{display:block;height:100%}
+.track i.zh{background:var(--zh)}.track i.pt{background:var(--pt)}
+.track i.left{opacity:.25}
+.legend{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+.plan{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:13.5px}
+.plan select{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:3px 6px}
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:-4px -4px 12px;padding:0 4px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:9px 12px;font-size:14.5px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc);font-weight:600}
+.tabs .n{font-size:11.5px;background:var(--sunk);border-radius:999px;padding:0 6px;margin-left:4px;color:var(--muted)}
+.add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px}
+.add.fx{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.add.fx .wide{grid-column:1/-1;display:flex;gap:8px}
+@media (max-width:520px){.add{grid-template-columns:minmax(0,1fr)}}
+.ltag{display:flex;gap:6px;margin:8px 0 2px;font-size:13px;align-items:center;flex-wrap:wrap}
+.ltag button{border:1px solid var(--line);background:none;border-radius:999px;padding:2px 10px;font-size:12.5px}
+.ltag button[aria-pressed="true"].zh{background:var(--zh-soft);border-color:var(--zh);color:var(--zh)}
+.ltag button[aria-pressed="true"].pt{background:var(--pt-soft);border-color:var(--pt);color:var(--pt)}
+ul.items{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:6px}
+ul.items li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+ul.items .dot{width:8px;height:8px;border-radius:50%;margin-top:8px}
+ul.items .dot.zh{background:var(--zh)}ul.items .dot.pt{background:var(--pt)}
+ul.items .w{font-weight:600;font-size:16px}
+ul.items .m{color:var(--ink)}
+ul.items .by{font-size:12px;color:var(--muted)}
+ul.items .bad{text-decoration:line-through;color:var(--muted)}
+ul.items .good{font-weight:600}
+ul.items .x{border:0;background:none;color:var(--muted);font-size:18px;line-height:1;padding:2px 4px}
+.empty{color:var(--muted);font-size:14px;padding:14px 4px}
+.sumgrid{display:grid;gap:12px}
+.sumgrid h4{margin:0 0 4px;font-size:14px}
+.ro{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-height:60px}
+.saved{font-size:12px;color:var(--muted)}
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(10,15,17,.45);display:grid;place-items:center;padding:16px;z-index:50}
+.modal{background:var(--card);border-radius:var(--r);max-width:560px;width:100%;max-height:85vh;overflow:auto;padding:18px}
+.modal h3{margin:0 0 10px;font-family:var(--f-head);font-weight:600;font-size:19px}
+.hist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hist button{width:100%;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;gap:10px}
+.hist button[aria-current="true"]{border-color:var(--acc)}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:14px;z-index:60;max-width:90vw}
+.sessbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.sessbar .t{font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><img src="icon.svg" alt=""><div style="min-width:0"><h1 id="title">桥 · Ponte</h1><div class="sub" data-i="tagline"></div></div></div>
+    <div class="sp"></div>
+    <div class="seg" id="uil" role="group" aria-label="Language"><button data-ui="zh">中文</button><button data-ui="pt">PT</button><button data-ui="en">EN</button></div>
+    <button class="btn sm" id="b-hist" hidden><span data-i="history"></span></button>
+    <button class="btn sm ghost" id="b-leave" hidden><span data-i="leave"></span></button>
+  </header>
+
+  <!-- create -->
+  <section class="gate card" id="v-create" hidden>
+    <h2 data-i="createTitle"></h2>
+    <p class="lead" data-i="createLead"></p>
+    <label class="f" for="c-name" data-i="spaceName"></label>
+    <input type="text" id="c-name" maxlength="60" autocomplete="off">
+    <label class="f" for="c-pw" data-i="password"></label>
+    <input type="password" id="c-pw" autocomplete="new-password">
+    <div class="small muted" style="margin-top:5px" data-i="pwHint"></div>
+    <div style="margin-top:16px"><button class="btn primary" id="c-go"><span data-i="create"></span></button></div>
+    <div class="err" id="c-err"></div>
+    <div id="c-done" hidden>
+      <label class="f" data-i="yourLink"></label>
+      <div class="linkbox"><input type="text" id="c-link" readonly><button class="btn sm" id="c-copy"><span data-i="copy"></span></button></div>
+      <p class="small muted" data-i="sendSeparately"></p>
+      <button class="btn primary" id="c-enter"><span data-i="enter"></span></button>
+    </div>
+  </section>
+
+  <!-- join -->
+  <section class="gate card" id="v-join" hidden>
+    <h2 data-i="joinTitle"></h2>
+    <p class="lead" data-i="joinLead"></p>
+    <label class="f" for="j-name" data-i="yourName"></label>
+    <input type="text" id="j-name" maxlength="40" autocomplete="nickname">
+    <label class="f" data-i="iLearn"></label>
+    <div class="pick" id="j-learn"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button></div>
+    <label class="f" for="j-pw" data-i="password"></label>
+    <input type="password" id="j-pw" autocomplete="current-password">
+    <label class="chk"><input type="checkbox" id="j-rem" checked> <span data-i="remember"></span></label>
+    <div style="margin-top:16px"><button class="btn primary" id="j-go"><span data-i="enter"></span></button></div>
+    <div class="err" id="j-err"></div>
+  </section>
+
+  <!-- room -->
+  <main id="v-room" hidden>
+    <div class="grid">
+      <div class="stack">
+        <div class="vid" id="vid">
+          <video id="rv" autoplay playsinline></video>
+          <video id="lv" autoplay playsinline muted hidden></video>
+          <div class="idle" id="idle"><div><div id="idle-t" style="font-size:17px"></div><div class="who" id="idle-w"></div><div style="margin-top:14px"><button class="btn primary" id="b-call"><span data-i="startCall"></span></button></div></div></div>
+          <div class="st" id="cst" hidden></div>
+          <div class="rname" id="rname" hidden></div>
+          <div class="bar" id="cbar" hidden>
+            <button class="cb" id="b-mic" aria-label="mic"></button>
+            <button class="cb" id="b-cam" aria-label="camera"></button>
+            <button class="cb" id="b-scr" aria-label="screen" hidden></button>
+            <button class="cb end" id="b-end" aria-label="end"></button>
+          </div>
+        </div>
+        <div class="people" id="people"></div>
+        <div class="card">
+          <div class="tm">
+            <h3 data-i="session"></h3>
+            <span class="phase" id="t-phase"></span>
+            <div class="sp"></div>
+            <span class="big" id="t-big">30:00</span>
+          </div>
+          <div class="track" id="t-track"></div>
+          <div class="legend" id="t-leg"></div>
+          <div class="plan">
+            <button class="btn sm primary" id="t-start"></button>
+            <button class="btn sm" id="t-reset"><span data-i="reset"></span></button>
+            <span class="sp"></span>
+            <span class="muted" data-i="first"></span>
+            <select id="p-first"><option value="zh">中文</option><option value="pt">Português</option></select>
+            <select id="p-min"><option value="15">2 × 15</option><option value="20">2 × 20</option><option value="25">2 × 25</option><option value="30">2 × 30</option><option value="45">2 × 45</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sessbar"><span class="t" id="s-title"></span><span class="muted small" id="s-date"></span><span class="sp"></span><button class="btn sm" id="b-new"><span data-i="newSession"></span></button><button class="btn sm" id="b-export"><span data-i="export"></span></button></div>
+        <div class="tabs" role="tablist">
+          <button role="tab" data-tab="vocab" aria-selected="true"><span data-i="vocab"></span><span class="n" id="n-vocab">0</span></button>
+          <button role="tab" data-tab="fix"><span data-i="fixes"></span><span class="n" id="n-fix">0</span></button>
+          <button role="tab" data-tab="notes"><span data-i="notes"></span></button>
+          <button role="tab" data-tab="sum"><span data-i="summary"></span></button>
+        </div>
+        <div id="p-vocab">
+          <div class="add"><input type="text" id="v-w" data-ph="phWord"><input type="text" id="v-m" data-ph="phMeaning"><button class="btn primary sm" id="v-add"><span data-i="add"></span></button></div>
+          <div class="ltag"><span class="muted" data-i="language"></span><button class="zh" data-vl="zh">中文</button><button class="pt" data-vl="pt">Português</button></div>
+          <ul class="items" id="l-vocab"></ul>
+        </div>
+        <div id="p-fix" hidden>
+          <div class="add fx"><input type="text" id="f-bad" data-ph="phSaid"><input type="text" id="f-good" data-ph="phBetter"><div class="wide"><input type="text" id="f-note" data-ph="phWhy"><button class="btn primary sm" id="f-add"><span data-i="add"></span></button></div></div>
+          <div class="ltag"><span class="muted" data-i="language"></span><button class="zh" data-fl="zh">中文</button><button class="pt" data-fl="pt">Português</button></div>
+          <ul class="items" id="l-fix"></ul>
+        </div>
+        <div id="p-notes" hidden>
+          <div class="small muted" style="margin-bottom:6px" data-i="notesHint"></div>
+          <textarea id="n-text" rows="12" data-ph="phNotes"></textarea>
+          <div class="saved" id="n-saved"></div>
+        </div>
+        <div id="p-sum" hidden>
+          <div class="small muted" style="margin-bottom:8px" data-i="sumHint"></div>
+          <div class="sumgrid" id="sumgrid"></div>
+        </div>
+      </div>
+    </div>
+    <p class="small muted" style="margin-top:18px" id="foot"></p>
+  </main>
+</div>
+
+<div class="scrim" id="m-hist" hidden><div class="modal"><h3 data-i="history"></h3><ul class="hist" id="hist"></ul>
+  <details style="margin-top:16px"><summary class="small muted" data-i="advanced"></summary>
+    <p class="small muted" data-i="turnHint"></p>
+    <label class="f" data-i="spaceName"></label><input type="text" id="a-name" maxlength="60">
+    <label class="f">TURN URL</label><input type="text" id="a-turl" placeholder="turns:turn.example.com:5349">
+    <label class="f">TURN username</label><input type="text" id="a-tuser">
+    <label class="f">TURN credential</label><input type="password" id="a-tpass">
+    <div style="margin-top:10px"><button class="btn sm" id="a-save"><span data-i="save"></span></button></div>
+  </details>
+  <div style="margin-top:16px;text-align:right"><button class="btn" id="m-close"><span data-i="close"></span></button></div></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="vendor/supabase.js"></script>
+<script>
+(function(){
+"use strict";
+const SB_URL="https://zueejqmjkanifgryznzc.supabase.co", SB_KEY="sb_publishable_sEdjNv2QlXrdNzZyVQqeww_iTBFPPdB";
+const LOCAL=new URLSearchParams(location.search).has("local"); // test mode: same-browser tabs, no server
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>{ const a=new Uint8Array(9); crypto.getRandomValues(a); return [...a].map(b=>"abcdefghijkmnpqrstuvwxyz23456789"[b%32]).join(""); };
+const now=()=>Date.now();
+
+/* ---------- i18n ---------- */
+const T={
+ tagline:["我们的语言学习空间","O nosso espaço de idiomas","Our language space"],
+ history:["历次学习","Sessões","Sessions"], leave:["离开","Sair","Leave"],
+ createTitle:["创建你们的空间","Criar o vosso espaço","Create your space"],
+ createLead:["只属于你和语伴：视频通话、计时、词汇表、纠错记录和课后总结都在一个页面里。","Só para você e seu parceiro: chamada de vídeo, cronômetro, vocabulário, correções e resumo numa página só.","Just for you and your partner: video call, timer, vocabulary, corrections and summaries on one page."],
+ spaceName:["空间名称","Nome do espaço","Space name"], password:["密码","Senha","Password"],
+ pwHint:["至少 8 个字符。笔记会用这个密码在设备上加密，服务器看不到内容。密码忘了就打不开，请记好。","Pelo menos 8 caracteres. As notas são criptografadas no aparelho com esta senha; o servidor não vê o conteúdo. Sem a senha não dá para abrir.","At least 8 characters. Notes are encrypted on your device with this password; the server can't read them. Without it the space can't be opened."],
+ create:["创建","Criar","Create"], yourLink:["你们的专属链接","O link de vocês","Your private link"], copy:["复制","Copiar","Copy"], copied:["已复制","Copiado","Copied"],
+ sendSeparately:["把链接发给语伴，密码最好用另一种方式告诉对方。","Mande o link ao parceiro; a senha, de preferência, por outro canal.","Send the link to your partner — ideally the password through another channel."],
+ enter:["进入","Entrar","Enter"],
+ joinTitle:["进入空间","Entrar no espaço","Enter the space"], joinLead:["输入你的名字和密码。","Digite seu nome e a senha.","Enter your name and the password."],
+ yourName:["你的名字","Seu nome","Your name"], iLearn:["我在学","Estou aprendendo","I'm learning"],
+ learnZh:["我在学中文","Aprendo chinês","I'm learning Chinese"], learnPt:["我在学葡语","Aprendo português","I'm learning Portuguese"],
+ remember:["在这台设备上记住我","Lembrar neste aparelho","Remember me on this device"],
+ errName:["请写你的名字。","Escreva seu nome.","Please enter your name."], errLearn:["请选择你在学的语言。","Escolha o idioma que você aprende.","Choose the language you're learning."],
+ errPw:["密码至少要 8 个字符。","A senha precisa de pelo menos 8 caracteres.","The password needs at least 8 characters."],
+ errWrong:["密码不对，或者这个空间不存在。","Senha errada, ou este espaço não existe.","Wrong password, or this space doesn't exist."],
+ errNet:["连不上服务器，请检查网络后再试。","Sem conexão com o servidor. Verifique a internet.","Can't reach the server. Check your connection."],
+ errExists:["这个链接已经被用过了，请重新创建。","Este link já existe; crie de novo.","That link already exists — create again."],
+ startCall:["开始视频通话","Iniciar chamada de vídeo","Start video call"], waiting:["等语伴进来…","Esperando o parceiro…","Waiting for your partner…"],
+ partnerHere:["{0} 在空间里","{0} está no espaço","{0} is here"], partnerInCall:["{0} 已经在通话中","{0} já está na chamada","{0} is already in the call"],
+ connecting:["正在连接…","Conectando…","Connecting…"], connected:["已连接","Conectado","Connected"], reconnecting:["连接断了，正在重连…","Conexão caiu, reconectando…","Connection lost, reconnecting…"],
+ failed:["连不上对方。可能是网络防火墙挡住了，可以在「历次学习 → 高级」里填一个 TURN 服务器。","Não foi possível conectar. Talvez um firewall bloqueie; dá para configurar um servidor TURN em «Sessões → Avançado».","Couldn't connect. A firewall may be blocking it; you can add a TURN server under “Sessions → Advanced”."],
+ noCam:["打不开摄像头或麦克风。请在浏览器里允许访问，再试一次。","Não foi possível abrir câmera ou microfone. Permita o acesso no navegador e tente de novo.","Couldn't open camera or microphone. Allow access in the browser and try again."],
+ youAlone:["只有你在这里","Só você está aqui","Only you are here"],
+ session:["本次学习","Esta sessão","This session"], now:["现在说","Agora:","Now:"], done:["时间到","Tempo esgotado","Time's up"],
+ start:["开始","Começar","Start"], pause:["暂停","Pausar","Pause"], resume:["继续","Continuar","Resume"], reset:["重来","Zerar","Reset"], first:["先说","Começa com","First"],
+ switchTo:["换语言了：现在说 {0}","Troca: agora em {0}","Switch: now speak {0}"],
+ newSession:["新的一次","Nova sessão","New session"], export:["导出","Exportar","Export"],
+ vocab:["词汇","Vocabulário","Words"], fixes:["纠错","Correções","Corrections"], notes:["笔记","Notas","Notes"], summary:["总结","Resumo","Summary"],
+ add:["添加","Adicionar","Add"], language:["语言","Idioma","Language"],
+ phWord:["词或短语","Palavra ou expressão","Word or phrase"], phMeaning:["意思 / 例句","Significado / exemplo","Meaning / example"],
+ phSaid:["说成了…","Eu disse…","I said…"], phBetter:["更好的说法","Melhor dizer…","Better…"], phWhy:["说明（可不填）","Por quê (opcional)","Why (optional)"],
+ notesHint:["共同编辑：两个人都能写，几秒后同步。","Editado pelos dois; sincroniza em segundos.","Shared: you both can write; it syncs within seconds."],
+ phNotes:["Hoje eu…\n今天我……","Hoje eu…\n今天我……","Hoje eu…\n今天我……"],
+ sumHint:["每人写几句：今天学到了什么，下次想练什么。","Cada um escreve: o que aprendeu hoje e o que quer praticar na próxima.","Each of you: what you learned today, what to practise next time."],
+ noWords:["还没有词。聊天时遇到新词就加在这里。","Ainda nenhuma palavra. Adicione as novas durante a conversa.","No words yet — add new ones as you talk."],
+ noFix:["还没有纠错记录。","Nenhuma correção ainda.","No corrections yet."],
+ savedAt:["已保存","Salvo","Saved"], saving:["保存中…","Salvando…","Saving…"], saveFail:["没能保存到服务器，会自动重试。","Não salvou no servidor; vou tentar de novo.","Couldn't save to the server; retrying."],
+ by:["{0} 添加","por {0}","by {0}"], close:["关闭","Fechar","Close"], advanced:["高级设置","Avançado","Advanced"], save:["保存","Salvar","Save"],
+ turnHint:["一般不用填。如果两边网络都比较严格、视频一直连不上，可以填一个 TURN 中继服务器（例如 Cloudflare 的免费额度）。","Normalmente não precisa. Se a chamada nunca conecta por causa da rede, informe um servidor TURN (p. ex. a cota grátis da Cloudflare).","Usually not needed. If the call never connects because of strict networks, add a TURN relay server (e.g. Cloudflare's free tier)."],
+ newStarted:["{0} 开始了新的一次学习","{0} começou uma nova sessão","{0} started a new session"],
+ sessionN:["第 {0} 次","Sessão {0}","Session {0}"], items:["{0} 个词 · {1} 处纠错","{0} palavras · {1} correções","{0} words · {1} corrections"],
+ foot:["端到端加密：内容在设备上用你们的密码加密；视频直接在两台设备之间传输。","Criptografado de ponta a ponta: o conteúdo é cifrado com a senha de vocês; o vídeo vai direto entre os dois aparelhos.","End-to-end encrypted: content is encrypted with your password; video goes directly between your two devices."],
+ confirmNew:["开始新的一次学习？这一次的内容会留在「历次学习」里。","Começar nova sessão? Esta fica guardada em «Sessões».","Start a new session? This one stays in “Sessions”."],
+ confirmLeave:["离开空间？这台设备会忘记密码。","Sair do espaço? Este aparelho vai esquecer a senha.","Leave the space? This device will forget the password."],
+ notFound:["链接不完整。请用语伴发给你的完整链接。","Link incompleto. Use o link completo que recebeu.","The link is incomplete. Use the full link you received."]
+};
+const UIX={zh:0,pt:1,en:2};
+let UIL=(()=>{ try{ const v=localStorage.getItem("ponte-ui"); if(v&&UIX[v]!=null) return v; }catch(e){} const n=(navigator.language||"").toLowerCase(); return n.startsWith("zh")?"zh":n.startsWith("pt")?"pt":"en"; })();
+function t(k,...a){ const r=T[k]; let s=r?r[UIX[UIL]]:k; a.forEach((x,i)=>{ s=s.split("{"+i+"}").join(x); }); return s; }
+function applyUI(){
+  document.documentElement.lang={zh:"zh-CN",pt:"pt-BR",en:"en"}[UIL];
+  $$("[data-i]").forEach(el=>el.textContent=t(el.dataset.i));
+  $$("[data-ph]").forEach(el=>el.placeholder=t(el.dataset.ph));
+  $$("#uil button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ui===UIL));
+  $("#foot").textContent=t("foot");
+  if(R) { renderAll(); callUI(); }
+}
+$("#uil").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; UIL=b.dataset.ui; try{ localStorage.setItem("ponte-ui",UIL); }catch(x){} applyUI(); });
+let toastT; function toast(s){ const el=$("#toast"); el.textContent=s; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,3200); }
+const LNAME={zh:"中文",pt:"Português"};
+
+/* ---------- crypto: password → room id + AES key (PBKDF2, AES-GCM) ---------- */
+const te=new TextEncoder(), td=new TextDecoder();
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u))), unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const hex=u=>[...new Uint8Array(u)].map(b=>b.toString(16).padStart(2,"0")).join("");
+async function deriveBits(room,pw){ const k=await crypto.subtle.importKey("raw",te.encode(pw),"PBKDF2",false,["deriveBits"]);
+  return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt:te.encode("ponte:"+room),iterations:210000,hash:"SHA-256"},k,256)); }
+async function keysFrom(bits){
+  const cat=(s)=>{ const a=new Uint8Array(bits.length+s.length); a.set(bits); a.set(te.encode(s),bits.length); return a; };
+  const id=hex(await crypto.subtle.digest("SHA-256",cat("|id")));
+  const kraw=await crypto.subtle.digest("SHA-256",cat("|key"));
+  const key=await crypto.subtle.importKey("raw",kraw,"AES-GCM",false,["encrypt","decrypt"]);
+  return {id,key};
+}
+async function enc(obj){ const iv=crypto.getRandomValues(new Uint8Array(12)); const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},K.key,te.encode(JSON.stringify(obj))); return b64(iv)+"."+b64(ct); }
+async function dec(s){ const [a,b]=String(s).split("."); const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:unb64(a)},K.key,unb64(b)); return JSON.parse(td.decode(pt)); }
+
+/* ---------- storage + message bus (Supabase; ?local=1 uses the browser only, for testing) ---------- */
+let SB=null;
+function sb(){ if(!SB) SB=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false}}); return SB; }
+const Store={
+  async get(id){ if(LOCAL){ const v=localStorage.getItem("ponte-db-"+id); return v?JSON.parse(v):null; }
+    const {data,error}=await sb().rpc("tandem_get",{p_id:id}); if(error) throw error; return data&&data[0]||null; },
+  async put(id,data,rev){ if(LOCAL){ const cur=await this.get(id); if((cur?cur.rev:0)!==rev) return -1; const n=rev+1; localStorage.setItem("ponte-db-"+id,JSON.stringify({data,rev:n})); return n; }
+    const {data:r,error}=await sb().rpc("tandem_put",{p_id:id,p_data:data,p_rev:rev}); if(error) throw error; return r; }
+};
+let BUS=null;
+function busOpen(name,onMsg){
+  if(LOCAL){ const ch=new BroadcastChannel("ponte-"+name); ch.onmessage=e=>onMsg(e.data); return {send:m=>ch.postMessage(m),close:()=>ch.close()}; }
+  const ch=sb().channel("ponte:"+name,{config:{broadcast:{self:false}}});
+  ch.on("broadcast",{event:"m"},p=>onMsg(p.payload));
+  let ready=false; const q=[];
+  ch.subscribe(st=>{ if(st==="SUBSCRIBED"){ ready=true; q.splice(0).forEach(m=>ch.send({type:"broadcast",event:"m",payload:m})); presence(true); } });
+  return {send:m=>{ if(ready) ch.send({type:"broadcast",event:"m",payload:m}); else q.push(m); },close:()=>sb().removeChannel(ch)};
+}
+// messages must keep their order (WebRTC offers/answers/candidates), so encryption and handling run in a queue
+let OUTQ=Promise.resolve(), INQ=Promise.resolve();
+function send(type,body){ if(!BUS) return Promise.resolve(); const bus=BUS, msg={type,...body}; OUTQ=OUTQ.then(async()=>{ bus.send({f:ME.id,e:await enc(msg)}); }).catch(e=>console.warn(e)); return OUTQ; }
+
+/* ---------- state ---------- */
+let ROOM=null, K=null, R=null, REV=0, ME=null; // R = decrypted room document
+const PEERS=new Map(); // id → {name,learn,call,seen}
+function blankSession(n){ return {id:uid(),n,created:now(),t:now(),plan:{first:"zh",min:30,t:0},timer:{run:false,at:0,acc:0,t:0},vocab:{},fix:{},notes:{text:"",t:0,by:""},sum:{}}; }
+function blankRoom(name){ const s=blankSession(1); return {v:1,name:{v:name,t:now()},turn:{url:"",user:"",pass:"",t:0},cur:{v:s.id,t:now()},sessions:{[s.id]:s}}; }
+const lww=(a,b)=>!a?b:!b?a:((b.t||0)>(a.t||0)?b:a);
+function mergeItems(a,b){ const o=Object.assign({},a||{}); for(const k in (b||{})) o[k]=lww(o[k],b[k]); return o; }
+function mergeSession(a,b){ if(!a) return b; if(!b) return a;
+  return {id:a.id,n:Math.min(a.n,b.n)||a.n,created:Math.min(a.created,b.created),t:Math.max(a.t||0,b.t||0),plan:lww(a.plan,b.plan),timer:lww(a.timer,b.timer),
+    vocab:mergeItems(a.vocab,b.vocab),fix:mergeItems(a.fix,b.fix),notes:lww(a.notes,b.notes),sum:mergeItems(a.sum,b.sum)}; }
+function mergeRoom(a,b){ if(!a) return b; if(!b) return a; const s=Object.assign({},a.sessions);
+  for(const k in b.sessions) s[k]=mergeSession(s[k],b.sessions[k]);
+  return {v:1,name:lww(a.name,b.name),turn:lww(a.turn,b.turn),cur:lww(a.cur,b.cur),sessions:s}; }
+const S=()=>R.sessions[R.cur.v];
+
+/* save: read → merge → write with revision check, debounced */
+let saveT=null, saving=false, dirty=false;
+function saveSoon(){ dirty=true; $("#n-saved").textContent=t("saving"); clearTimeout(saveT); saveT=setTimeout(saveNow,1200); }
+async function saveNow(){
+  if(saving){ saveSoon(); return; } saving=true; dirty=false;
+  try{
+    for(let i=0;i<4;i++){
+      const r=await Store.put(K.id,await enc(R),REV);
+      if(r>0){ REV=r; break; }
+      const cur=await Store.get(K.id); if(cur){ R=mergeRoom(R,await dec(cur.data)); REV=cur.rev; }
+    }
+    $("#n-saved").textContent=t("savedAt")+" · "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  }catch(e){ console.warn(e); $("#n-saved").textContent=t("saveFail"); setTimeout(saveSoon,8000); }
+  finally{ saving=false; }
+}
+window.addEventListener("beforeunload",()=>{ if(dirty) saveNow(); });
+
+/* a change: apply locally, tell the partner, save */
+function change(kind,data){ applyChange(kind,data); send("chg",{kind,data}); saveSoon(); renderAll(); }
+function applyChange(kind,d){
+  if(kind==="session"){ R.sessions[d.id]=mergeSession(R.sessions[d.id],d); return; }
+  if(kind==="cur"){ R.cur=lww(R.cur,d); return; }
+  if(kind==="name"){ R.name=lww(R.name,d); return; }
+  if(kind==="turn"){ R.turn=lww(R.turn,d); return; }
+  const s=R.sessions[d.sid]; if(!s) return;
+  if(kind==="vocab"||kind==="fix") s[kind][d.item.id]=lww(s[kind][d.item.id],d.item);
+  else if(kind==="sum") s.sum[d.key]=lww(s.sum[d.key],d.item);
+  else if(kind==="notes"||kind==="plan"||kind==="timer") s[kind]=lww(s[kind],d.item);
+}
+
+/* ---------- views ---------- */
+function show(v){ ["create","join","room"].forEach(x=>$("#v-"+x).hidden=x!==v); $("#b-hist").hidden=$("#b-leave").hidden=v!=="room"; }
+function roomFromHash(){ const m=location.hash.match(/r=([a-z0-9]{12,40})/); return m?m[1]:null; }
+
+async function boot(){
+  applyUI();
+  ROOM=roomFromHash();
+  if(!ROOM){ show("create"); return; }
+  let saved=null; try{ saved=JSON.parse(localStorage.getItem("ponte-room-"+ROOM)||"null"); }catch(e){}
+  if(saved&&saved.bits){ try{ await enterWith(unb64(saved.bits),saved.me,false); return; }catch(e){ console.warn(e); } }
+  show("join"); prefillJoin(saved&&saved.me);
+}
+function prefillJoin(me){ let p=null; try{ p=JSON.parse(localStorage.getItem("ponte-me")||"null"); }catch(e){} p=me||p; if(p){ $("#j-name").value=p.name||""; if(p.learn) $$("#j-learn button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===p.learn)); } }
+
+/* create */
+$("#c-go").addEventListener("click",async()=>{
+  const name=$("#c-name").value.trim()||"桥 · Ponte", pw=$("#c-pw").value; $("#c-err").textContent="";
+  if(pw.length<8){ $("#c-err").textContent=t("errPw"); return; }
+  $("#c-go").disabled=true;
+  try{
+    ROOM=uid()+uid(); const bits=await deriveBits(ROOM,pw); K=await keysFrom(bits);
+    const doc=blankRoom(name); const r=await Store.put(K.id,await enc(doc),0);
+    if(r<0){ $("#c-err").textContent=t("errExists"); return; }
+    const link=location.origin+location.pathname+location.search+"#r="+ROOM;
+    $("#c-link").value=link; $("#c-done").hidden=false; $("#c-go").hidden=true;
+    $("#c-enter").onclick=()=>{ location.hash="r="+ROOM; show("join"); prefillJoin(); $("#j-pw").value=pw; };
+  }catch(e){ console.warn(e); $("#c-err").textContent=t("errNet"); }
+  finally{ $("#c-go").disabled=false; }
+});
+$("#c-copy").addEventListener("click",async()=>{ try{ await navigator.clipboard.writeText($("#c-link").value); toast(t("copied")); }catch(e){ $("#c-link").select(); } });
+
+/* join */
+$("#j-learn").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; $$("#j-learn button").forEach(x=>x.setAttribute("aria-pressed",x===b)); });
+$("#j-go").addEventListener("click",async()=>{
+  const name=$("#j-name").value.trim(), lb=$("#j-learn button[aria-pressed=true]"), pw=$("#j-pw").value, err=$("#j-err"); err.textContent="";
+  if(!name){ err.textContent=t("errName"); return; } if(!lb){ err.textContent=t("errLearn"); return; } if(pw.length<8){ err.textContent=t("errPw"); return; }
+  $("#j-go").disabled=true;
+  try{ const bits=await deriveBits(ROOM,pw); await enterWith(bits,{name,learn:lb.dataset.l},$("#j-rem").checked); }
+  catch(e){ err.textContent=e&&e.code==="wrong"?t("errWrong"):t("errNet"); console.warn(e); }
+  finally{ $("#j-go").disabled=false; }
+});
+$("#j-pw").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#j-go").click(); });
+
+async function enterWith(bits,me,remember){
+  K=await keysFrom(bits);
+  const row=await Store.get(K.id); if(!row) throw {code:"wrong"};
+  R=await dec(row.data); REV=row.rev;
+  ME={id:uid(),name:me.name,learn:me.learn};
+  try{ localStorage.setItem("ponte-me",JSON.stringify(me)); if(remember!==false) localStorage.setItem("ponte-room-"+ROOM,JSON.stringify({bits:b64(bits),me})); }catch(e){}
+  show("room"); openBus(); renderAll(); callUI(); setInterval(tick,500); setInterval(()=>presence(),9000); setInterval(prunePeers,5000);
+}
+$("#b-leave").addEventListener("click",()=>{ if(!confirm(t("confirmLeave"))) return; try{ localStorage.removeItem("ponte-room-"+ROOM); }catch(e){} send("bye",{}); hangup(); location.reload(); });
+
+/* ---------- presence + messages ---------- */
+function openBus(){ BUS=busOpen(K.id.slice(0,40),onMsg); presence(true); }
+function presence(ask){ send("here",{name:ME.name,learn:ME.learn,call:!!LOCALSTREAM,ask:!!ask}); }
+function prunePeers(){ let ch=false; for(const [id,p] of PEERS) if(now()-p.seen>30000){ PEERS.delete(id); ch=true; if(PC&&PEER===id) closePC(); } if(ch){ renderPeople(); callUI(); } }
+function onMsg(m){ INQ=INQ.then(()=>handleMsg(m)).catch(e=>console.warn(e)); }
+async function handleMsg(m){
+  if(!m||m.f===ME.id) return; let b; try{ b=await dec(m.e); }catch(e){ return; }
+  const from=m.f;
+  if(b.type==="here"){ const was=PEERS.get(from); PEERS.set(from,{name:b.name,learn:b.learn,call:b.call,seen:now()}); if(b.ask) presence(false);
+    if(!was){ renderPeople(); send("sync",{room:R}); } else renderPeople();
+    if(b.call&&LOCALSTREAM&&!PC) startPC(from); callUI(); return; }
+  if(b.type==="bye"){ PEERS.delete(from); if(PEER===from) closePC(); renderPeople(); callUI(); return; }
+  const p=PEERS.get(from); if(p) p.seen=now();
+  if(b.type==="sync"){ R=mergeRoom(R,b.room); renderAll(); return; }
+  if(b.type==="chg"){ const before=R.cur.v; applyChange(b.kind,b.data); if(b.kind==="cur"&&R.cur.v!==before) toast(t("newStarted",(p&&p.name)||"…")); renderAll(true); return; }
+  if(b.type==="hang"){ if(PEER===from) closePC(); return; }
+  if(b.type==="sig") return onSignal(from,b);
+}
+function renderPeople(){
+  const el=$("#people"); const arr=[`<span class="on">${esc(ME.name)} · ${LNAME[ME.learn==="zh"?"zh":"pt"]}</span>`];
+  const seen=new Set([ME.name]); for(const [,p] of PEERS){ if(seen.has(p.name)) continue; seen.add(p.name); arr.push(`<span class="on">${esc(p.name)} · ${LNAME[p.learn==="zh"?"zh":"pt"]}</span>`); }
+  el.innerHTML=arr.join("");
+}
+
+/* ---------- video call: WebRTC directly between the two browsers ("perfect negotiation") ---------- */
+let LOCALSTREAM=null, PC=null, PEER=null, makingOffer=false, ignoreOffer=false, SCREEN=null, camSender=null;
+const ICON={
+ mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+ micOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 9v2a3 3 0 0 0 5.1 2.1M15 10V6a3 3 0 0 0-5.7-1.3M5 11a7 7 0 0 0 11.4 5.4M19 11a7 7 0 0 1-.6 2.8M12 18v3M3 3l18 18"/></svg>',
+ cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>',
+ camOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16v1a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1M10 6h5a1 1 0 0 1 1 1v3l5-3v10M3 3l18 18"/></svg>',
+ scr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>',
+ end:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15c5-5 13-5 18 0l-2.5 2.5-3-1.5v-2.5c-2-.7-5-.7-7 0V16l-3 1.5z"/></svg>'
+};
+function iceServers(){ const s=[{urls:["stun:stun.cloudflare.com:3478","stun:stun.l.google.com:19302"]}]; const tu=R&&R.turn; if(tu&&tu.url) s.push({urls:tu.url.split(/[\s,]+/).filter(Boolean),username:tu.user,credential:tu.pass}); return s; }
+async function startCall(){
+  try{ LOCALSTREAM=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:{width:{ideal:1280},height:{ideal:720},facingMode:"user"}}); }
+  catch(e){ try{ LOCALSTREAM=await navigator.mediaDevices.getUserMedia({audio:true,video:false}); toast(t("noCam")); }catch(e2){ toast(t("noCam")); return; } }
+  const lv=$("#lv"); lv.srcObject=LOCALSTREAM; lv.hidden=false;
+  presence(); for(const [id,p] of PEERS) if(p.call){ startPC(id); break; }
+  callUI();
+}
+function startPC(peer){
+  if(PC) closePC(); PEER=peer; const polite=ME.id<peer;
+  const pc=PC=new RTCPeerConnection({iceServers:iceServers()});
+  LOCALSTREAM.getTracks().forEach(tr=>{ const s=pc.addTrack(tr,LOCALSTREAM); if(tr.kind==="video") camSender=s; });
+  pc.ontrack=e=>{ const rv=$("#rv"); if(rv.srcObject!==e.streams[0]){ rv.srcObject=e.streams[0]; } callUI(); };
+  pc.onicecandidate=e=>{ if(e.candidate) send("sig",{to:peer,cand:e.candidate.toJSON()}); };
+  pc.onnegotiationneeded=async()=>{ try{ makingOffer=true; await pc.setLocalDescription(); send("sig",{to:peer,desc:pc.localDescription.toJSON()}); }catch(e){ console.warn(e); } finally{ makingOffer=false; } };
+  pc.onconnectionstatechange=()=>{ if(pc.connectionState==="failed") pc.restartIce(); callUI(); };
+  pc.oniceconnectionstatechange=()=>callUI();
+  pc._polite=polite; callUI();
+}
+async function onSignal(from,b){
+  if(b.to!==ME.id) return;
+  if(!LOCALSTREAM) return; if(!PC||PEER!==from) startPC(from);
+  const pc=PC;
+  try{
+    if(b.desc){ const offerCollision=b.desc.type==="offer"&&(makingOffer||pc.signalingState!=="stable");
+      ignoreOffer=!pc._polite&&offerCollision; if(ignoreOffer) return;
+      await pc.setRemoteDescription(b.desc);
+      if(b.desc.type==="offer"){ await pc.setLocalDescription(); send("sig",{to:from,desc:pc.localDescription.toJSON()}); } }
+    else if(b.cand){ try{ await pc.addIceCandidate(b.cand); }catch(e){ if(!ignoreOffer) console.warn(e); } }
+  }catch(e){ console.warn(e); }
+}
+function closePC(){ if(PC){ try{ PC.close(); }catch(e){} } PC=null; PEER=null; camSender=null; $("#rv").srcObject=null; callUI(); }
+function hangup(){ if(PC&&BUS) send("hang",{}); closePC(); if(SCREEN){ SCREEN.getTracks().forEach(x=>x.stop()); SCREEN=null; } if(LOCALSTREAM){ LOCALSTREAM.getTracks().forEach(x=>x.stop()); LOCALSTREAM=null; } $("#lv").srcObject=null; $("#lv").hidden=true; if(BUS) presence(); callUI(); }
+$("#b-call").addEventListener("click",startCall);
+$("#b-end").addEventListener("click",hangup);
+$("#b-mic").addEventListener("click",()=>{ const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0]; if(a){ a.enabled=!a.enabled; callUI(); } });
+$("#b-cam").addEventListener("click",()=>{ const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; if(v){ v.enabled=!v.enabled; callUI(); } });
+$("#b-scr").addEventListener("click",async()=>{
+  if(SCREEN){ stopScreen(); return; }
+  try{ SCREEN=await navigator.mediaDevices.getDisplayMedia({video:true}); }catch(e){ return; }
+  const tr=SCREEN.getVideoTracks()[0]; if(camSender) await camSender.replaceTrack(tr);
+  $("#lv").srcObject=SCREEN; $("#lv").classList.add("screen"); tr.onended=stopScreen; callUI();
+});
+async function stopScreen(){ if(!SCREEN) return; SCREEN.getTracks().forEach(x=>x.stop()); SCREEN=null; const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; if(camSender&&v) await camSender.replaceTrack(v); $("#lv").srcObject=LOCALSTREAM; $("#lv").classList.remove("screen"); callUI(); }
+function callUI(){
+  if(!R) return;
+  const inCall=!!LOCALSTREAM, peer=PEER&&PEERS.get(PEER), other=[...PEERS.values()][0];
+  const st=PC?(PC.connectionState||PC.iceConnectionState):"";
+  const live=PC&&(st==="connected"||PC.iceConnectionState==="connected"||PC.iceConnectionState==="completed");
+  $("#idle").hidden=inCall&&!!live; $("#b-call").hidden=inCall;
+  $("#idle-t").textContent=!inCall?(other?(other.call?t("partnerInCall",other.name):t("partnerHere",other.name)):t("youAlone")):(PC?t("connecting"):t("waiting"));
+  $("#idle-w").textContent=inCall&&!PC?"":"";
+  $("#cbar").hidden=!inCall;
+  $("#cst").hidden=!PC; $("#cst").textContent=st==="failed"?t("failed"):st==="disconnected"?t("reconnecting"):live?t("connected"):t("connecting");
+  $("#rname").hidden=!live; $("#rname").textContent=peer?peer.name:"";
+  const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0], v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0];
+  $("#b-mic").innerHTML=a&&!a.enabled?ICON.micOff:ICON.mic; $("#b-mic").classList.toggle("off",!!(a&&!a.enabled));
+  $("#b-cam").innerHTML=v&&!v.enabled?ICON.camOff:ICON.cam; $("#b-cam").classList.toggle("off",!!(v&&!v.enabled)); $("#b-cam").hidden=!v;
+  $("#b-scr").innerHTML=ICON.scr; $("#b-scr").hidden=!(navigator.mediaDevices&&navigator.mediaDevices.getDisplayMedia)||!v||/iPhone|iPad|Android/i.test(navigator.userAgent); $("#b-scr").classList.toggle("off",!!SCREEN);
+  $("#b-end").innerHTML=ICON.end;
+}
+
+/* ---------- timer: two halves, one per language ---------- */
+let lastPhase=null;
+function phases(){ const p=S().plan, a=p.first, b=a==="zh"?"pt":"zh"; return [{l:a,m:p.min},{l:b,m:p.min}]; }
+function elapsed(){ const tm=S().timer; return tm.run?(tm.acc+(now()-tm.at)):tm.acc; }
+function tick(){
+  if(!R) return; const ph=phases(), tot=(ph[0].m+ph[1].m)*60000, el=Math.min(elapsed(),tot), half=ph[0].m*60000;
+  const idx=el<half?0:1, endOf=idx===0?half:tot, rest=Math.max(0,endOf-el), over=el>=tot;
+  const mm=Math.floor(rest/60000), ss=Math.floor(rest%60000/1000);
+  $("#t-big").textContent=over?"00:00":String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");
+  const cur=ph[idx].l; const pe=$("#t-phase"); pe.className="phase "+(over?"":cur); pe.textContent=over?t("done"):t("now")+" "+LNAME[cur];
+  const w0=Math.min(el,half)/tot*100, w1=Math.max(0,el-half)/tot*100;
+  $("#t-track").innerHTML=`<i class="${ph[0].l}" style="width:${w0}%"></i><i class="${ph[0].l} left" style="width:${50-w0}%"></i><i class="${ph[1].l}" style="width:${w1}%"></i><i class="${ph[1].l} left" style="width:${50-w1}%"></i>`;
+  $("#t-leg").innerHTML=`<span>${LNAME[ph[0].l]} · ${ph[0].m} min</span><span>${LNAME[ph[1].l]} · ${ph[1].m} min</span>`;
+  const tm=S().timer; $("#t-start").textContent=tm.run?t("pause"):(tm.acc>0&&!over?t("resume"):t("start"));
+  const key=S().id+":"+(over?"end":idx);
+  if(tm.run&&lastPhase&&lastPhase!==key&&lastPhase.startsWith(S().id)){ chime(over?3:2); toast(over?t("done"):t("switchTo",LNAME[cur])); }
+  lastPhase=key;
+  if(over&&tm.run) change("timer",{sid:S().id,item:{run:false,at:0,acc:tot,t:now()}});
+}
+function chime(n){ try{ const ac=new (window.AudioContext||window.webkitAudioContext)(); for(let i=0;i<n;i++){ const o=ac.createOscillator(), g=ac.createGain(); o.frequency.value=i%2?660:880; o.connect(g); g.connect(ac.destination); const s=ac.currentTime+i*0.35; g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(0.25,s+0.02); g.gain.exponentialRampToValueAtTime(0.0001,s+0.3); o.start(s); o.stop(s+0.32); } }catch(e){} }
+$("#t-start").addEventListener("click",()=>{ const tm=S().timer, ph=phases(), tot=(ph[0].m+ph[1].m)*60000;
+  let item; if(tm.run) item={run:false,at:0,acc:elapsed(),t:now()}; else item={run:true,at:now(),acc:tm.acc>=tot?0:tm.acc,t:now()};
+  change("timer",{sid:S().id,item}); });
+$("#t-reset").addEventListener("click",()=>change("timer",{sid:S().id,item:{run:false,at:0,acc:0,t:now()}}));
+$("#p-first").addEventListener("change",e=>change("plan",{sid:S().id,item:Object.assign({},S().plan,{first:e.target.value,t:now()})}));
+$("#p-min").addEventListener("change",e=>change("plan",{sid:S().id,item:Object.assign({},S().plan,{min:+e.target.value,t:now()})}));
+
+/* ---------- words, corrections, notes, summaries ---------- */
+let TAB="vocab", VL=null, FL=null;
+const guessL=txt=>/[\u3400-\u9fff]/.test(txt)?"zh":/[a-zA-ZÀ-ÿ]/.test(txt)?"pt":null;
+const curLang=()=>{ const ph=phases(), el=elapsed(); return el<ph[0].m*60000?ph[0].l:ph[1].l; };
+$$(".tabs button").forEach(b=>b.addEventListener("click",()=>{ TAB=b.dataset.tab; renderAll(); }));
+$$("[data-vl]").forEach(b=>b.addEventListener("click",()=>{ VL=b.dataset.vl; renderAll(); }));
+$$("[data-fl]").forEach(b=>b.addEventListener("click",()=>{ FL=b.dataset.fl; renderAll(); }));
+function addVocab(){ const w=$("#v-w").value.trim(), m=$("#v-m").value.trim(); if(!w) { $("#v-w").focus(); return; }
+  change("vocab",{sid:S().id,item:{id:uid(),w,m,l:VL||guessL(w)||curLang(),by:ME.name,c:now(),t:now()}}); $("#v-w").value=$("#v-m").value=""; VL=null; $("#v-w").focus(); }
+function addFix(){ const bad=$("#f-bad").value.trim(), good=$("#f-good").value.trim(), note=$("#f-note").value.trim(); if(!bad&&!good){ $("#f-bad").focus(); return; }
+  change("fix",{sid:S().id,item:{id:uid(),bad,good,note,l:FL||guessL(good||bad)||curLang(),by:ME.name,c:now(),t:now()}}); $("#f-bad").value=$("#f-good").value=$("#f-note").value=""; FL=null; $("#f-bad").focus(); }
+$("#v-add").addEventListener("click",addVocab); $("#f-add").addEventListener("click",addFix);
+["#v-w","#f-bad","#f-good"].forEach(x=>$(x).addEventListener("input",()=>{ const cl=guessL($("#v-w").value)||curLang(), fl=guessL($("#f-good").value||$("#f-bad").value)||curLang(); $$("[data-vl]").forEach(b=>b.setAttribute("aria-pressed",(VL||cl)===b.dataset.vl)); $$("[data-fl]").forEach(b=>b.setAttribute("aria-pressed",(FL||fl)===b.dataset.fl)); }));
+["#v-w","#v-m"].forEach(s=>$(s).addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.isComposing) addVocab(); }));
+["#f-bad","#f-good","#f-note"].forEach(s=>$(s).addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.isComposing) addFix(); }));
+document.addEventListener("click",e=>{ const x=e.target.closest("[data-del]"); if(!x) return; const [kind,id]=x.dataset.del.split(":"); const it=S()[kind][id]; if(it) change(kind,{sid:S().id,item:Object.assign({},it,{del:true,t:now()})}); });
+let noteT=null, noteTyping=0;
+$("#n-text").addEventListener("input",e=>{ noteTyping=now(); clearTimeout(noteT); const v=e.target.value; noteT=setTimeout(()=>change("notes",{sid:S().id,item:{text:v,t:now(),by:ME.name}}),500); });
+document.addEventListener("input",e=>{ const ta=e.target.closest&&e.target.closest("[data-sum]"); if(!ta) return; clearTimeout(ta._t); const v=ta.value, key=ta.dataset.sum; ta._t=setTimeout(()=>change("sum",{sid:S().id,key,item:{name:ME.name,text:v,t:now()}}),600); });
+
+function sorted(o){ return Object.values(o||{}).filter(x=>!x.del).sort((a,b)=>(b.c||0)-(a.c||0)); }
+function renderAll(remote){
+  if(!R) return; const s=S();
+  $("#title").textContent=R.name.v||"桥 · Ponte"; document.title=(R.name.v||"桥")+" · Ponte";
+  $("#s-title").textContent=t("sessionN",s.n); $("#s-date").textContent=new Date(s.created).toLocaleDateString(UIL==="zh"?"zh-CN":UIL==="pt"?"pt-BR":"en-GB",{weekday:"short",day:"numeric",month:"short"});
+  $$(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===TAB)); ["vocab","fix","notes","sum"].forEach(k=>$("#p-"+k).hidden=k!==TAB);
+  const cl=guessL($("#v-w").value)||curLang(); const fl=guessL($("#f-good").value||$("#f-bad").value)||curLang(); $$("[data-vl]").forEach(b=>b.setAttribute("aria-pressed",(VL||cl)===b.dataset.vl)); $$("[data-fl]").forEach(b=>b.setAttribute("aria-pressed",(FL||fl)===b.dataset.fl));
+  const V=sorted(s.vocab), F=sorted(s.fix); $("#n-vocab").textContent=V.length; $("#n-fix").textContent=F.length;
+  $("#l-vocab").innerHTML=V.length?V.map(x=>`<li><span class="dot ${x.l}"></span><div><div class="w" lang="${x.l==="zh"?"zh-CN":"pt-BR"}">${esc(x.w)}</div>${x.m?`<div class="m">${esc(x.m)}</div>`:""}<div class="by">${esc(t("by",x.by||""))}</div></div><button class="x" data-del="vocab:${x.id}" aria-label="delete">×</button></li>`).join(""):`<li class="empty" style="border:0;background:none;display:block">${esc(t("noWords"))}</li>`;
+  $("#l-fix").innerHTML=F.length?F.map(x=>`<li><span class="dot ${x.l}"></span><div lang="${x.l==="zh"?"zh-CN":"pt-BR"}">${x.bad?`<span class="bad">${esc(x.bad)}</span> → `:""}<span class="good">${esc(x.good)}</span>${x.note?`<div class="m">${esc(x.note)}</div>`:""}<div class="by">${esc(t("by",x.by||""))}</div></div><button class="x" data-del="fix:${x.id}" aria-label="delete">×</button></li>`).join(""):`<li class="empty" style="border:0;background:none;display:block">${esc(t("noFix"))}</li>`;
+  const ta=$("#n-text"); if(document.activeElement!==ta||now()-noteTyping>2500){ if(ta.value!==s.notes.text) ta.value=s.notes.text||""; }
+  // summaries: one box per person (me editable, others read-only)
+  const names=new Set([ME.name,...[...PEERS.values()].map(p=>p.name),...Object.values(s.sum).map(x=>x.name)]);
+  const g=$("#sumgrid"); const focused=document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.sum;
+  if(!focused) g.innerHTML=[...names].filter(Boolean).map(n=>{ const it=s.sum[n]; return n===ME.name?`<div><h4>${esc(n)}</h4><textarea data-sum="${esc(n)}" rows="4">${esc(it?it.text:"")}</textarea></div>`:`<div><h4>${esc(n)}</h4><div class="ro">${esc(it?it.text:"")}</div></div>`; }).join("");
+  else [...g.querySelectorAll(".ro")].forEach(el=>{ const n=el.previousElementSibling.textContent, it=s.sum[n]; el.textContent=it?it.text:""; });
+  $("#p-first").value=s.plan.first; $("#p-min").value=String(s.plan.min);
+  renderPeople(); tick();
+}
+
+/* ---------- sessions: new, history, export ---------- */
+$("#b-new").addEventListener("click",()=>{ if(!confirm(t("confirmNew"))) return; const n=Math.max(...Object.values(R.sessions).map(x=>x.n||0))+1; const s=blankSession(n); s.plan=Object.assign({},S().plan,{t:now()});
+  change("session",s); change("cur",{v:s.id,t:now()}); });
+$("#b-hist").addEventListener("click",()=>{ const arr=Object.values(R.sessions).sort((a,b)=>b.created-a.created);
+  $("#hist").innerHTML=arr.map(s=>`<li><button data-open="${s.id}" aria-current="${s.id===R.cur.v}"><span><b>${esc(t("sessionN",s.n))}</b> · ${esc(new Date(s.created).toLocaleDateString())}</span><span class="muted small">${esc(t("items",sorted(s.vocab).length,sorted(s.fix).length))}</span></button></li>`).join("");
+  $("#a-name").value=R.name.v||""; $("#a-turl").value=R.turn.url||""; $("#a-tuser").value=R.turn.user||""; $("#a-tpass").value=R.turn.pass||""; $("#m-hist").hidden=false; });
+$("#hist").addEventListener("click",e=>{ const b=e.target.closest("[data-open]"); if(!b) return; change("cur",{v:b.dataset.open,t:now()}); $("#m-hist").hidden=true; });
+$("#m-close").addEventListener("click",()=>$("#m-hist").hidden=true);
+$("#m-hist").addEventListener("click",e=>{ if(e.target.id==="m-hist") $("#m-hist").hidden=true; });
+$("#a-save").addEventListener("click",()=>{ const nm=$("#a-name").value.trim(); if(nm&&nm!==R.name.v) change("name",{v:nm,t:now()});
+  change("turn",{url:$("#a-turl").value.trim(),user:$("#a-tuser").value.trim(),pass:$("#a-tpass").value,t:now()}); toast(t("savedAt")); });
+$("#b-export").addEventListener("click",()=>{
+  const s=S(), d=new Date(s.created).toISOString().slice(0,10), L=x=>x.l==="zh"?"中文":"PT";
+  let md=`# ${R.name.v||"Ponte"} — ${t("sessionN",s.n)} · ${d}\n\n## ${t("vocab")}\n`+sorted(s.vocab).reverse().map(x=>`- [${L(x)}] **${x.w}**${x.m?" — "+x.m:""}`).join("\n");
+  md+=`\n\n## ${t("fixes")}\n`+sorted(s.fix).reverse().map(x=>`- [${L(x)}] ${x.bad?"~~"+x.bad+"~~ → ":""}**${x.good}**${x.note?" ("+x.note+")":""}`).join("\n");
+  md+=`\n\n## ${t("notes")}\n${s.notes.text||""}\n\n## ${t("summary")}\n`+Object.values(s.sum).map(x=>`### ${x.name}\n${x.text}`).join("\n\n")+"\n";
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([md],{type:"text/markdown"})); a.download=`ponte-${d}-${s.n}.md`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+});
+window.addEventListener("hashchange",()=>{ if(roomFromHash()!==ROOM) location.reload(); });
+window.addEventListener("pagehide",()=>{ try{ if(BUS) send("bye",{}); }catch(e){} });
+if(LOCAL) window.__ponte={get R(){return R;},get PC(){return PC;},get PEERS(){return PEERS;}};
+boot();
+})();
+</script>
+</body>
+</html>
