@@ -140,6 +140,20 @@ ul.items .x{border:0;background:none;color:var(--muted);font-size:18px;line-heig
 body.wide .grid{grid-template-columns:minmax(0,.78fr) minmax(0,1.5fr)}
 @media (max-width:900px){body.wide .grid{grid-template-columns:minmax(0,1fr)}}
 ul.items li.on{border-color:var(--acc)}
+/* speaking time */
+.talk{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:8px}
+.talk h4{margin:0;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.trow{display:grid;grid-template-columns:minmax(70px,auto) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.trow .nm{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.trow .nm i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--line);display:inline-block}
+.trow .nm i.sp{background:#3c9a5f;box-shadow:0 0 0 4px rgba(60,154,95,.18)}
+.tbar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--sunk)}
+.tbar b{display:block;height:100%}.tbar b.zh{background:var(--zh)}.tbar b.pt{background:var(--pt)}.tbar b.free{background:var(--muted);opacity:.45}
+.trow .v{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.share{font-size:13px;color:var(--muted)}.share b{color:var(--ink)}
+.trend{display:grid;gap:5px;margin:0 0 14px}
+.trend .r{display:grid;grid-template-columns:5.5rem minmax(0,1fr) 3.6rem;gap:8px;align-items:center;font-size:12.5px}
+.trend .r .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
 /* modal */
 .scrim{position:fixed;inset:0;background:rgba(10,15,17,.45);display:grid;place-items:center;padding:16px;z-index:50}
 .modal{background:var(--card);border-radius:var(--r);max-width:560px;width:100%;max-height:85vh;overflow:auto;padding:18px}
@@ -158,6 +172,7 @@ ul.items li.on{border-color:var(--acc)}
     <div class="brand"><img src="icon.svg" alt=""><div style="min-width:0"><h1 id="title">桥 · Ponte</h1><div class="sub" data-i="tagline"></div></div></div>
     <div class="sp"></div>
     <div class="seg" id="uil" role="group" aria-label="Language"><button data-ui="zh">中文</button><button data-ui="pt">PT</button><button data-ui="en">EN</button></div>
+    <button class="btn sm primary" id="b-inv" hidden><span data-i="invite"></span></button>
     <button class="btn sm" id="b-hist" hidden><span data-i="history"></span></button>
     <button class="btn sm ghost" id="b-leave" hidden><span data-i="leave"></span></button>
   </header>
@@ -168,32 +183,31 @@ ul.items li.on{border-color:var(--acc)}
     <p class="lead" data-i="createLead"></p>
     <label class="f" for="c-name" data-i="spaceName"></label>
     <input type="text" id="c-name" maxlength="60" autocomplete="off">
-    <label class="f" for="c-pw" data-i="password"></label>
-    <input type="password" id="c-pw" autocomplete="new-password">
-    <div class="small muted" style="margin-top:5px" data-i="pwHint"></div>
+    <label class="f" for="c-me" data-i="yourName"></label>
+    <input type="text" id="c-me" maxlength="40" autocomplete="nickname">
+    <label class="f" data-i="iLearn"></label>
+    <div class="pick" data-pick="c"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button></div>
     <div style="margin-top:16px"><button class="btn primary" id="c-go"><span data-i="create"></span></button></div>
     <div class="err" id="c-err"></div>
-    <div id="c-done" hidden>
-      <label class="f" data-i="yourLink"></label>
-      <div class="linkbox"><input type="text" id="c-link" readonly><button class="btn sm" id="c-copy"><span data-i="copy"></span></button></div>
-      <p class="small muted" data-i="sendSeparately"></p>
-      <button class="btn primary" id="c-enter"><span data-i="enter"></span></button>
-    </div>
   </section>
 
-  <!-- join -->
+  <!-- accept a one-time invite -->
   <section class="gate card" id="v-join" hidden>
-    <h2 data-i="joinTitle"></h2>
-    <p class="lead" data-i="joinLead"></p>
+    <h2 data-i="inviteTitle"></h2>
+    <p class="lead" data-i="inviteLead"></p>
     <label class="f" for="j-name" data-i="yourName"></label>
     <input type="text" id="j-name" maxlength="40" autocomplete="nickname">
     <label class="f" data-i="iLearn"></label>
-    <div class="pick" id="j-learn"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button></div>
-    <label class="f" for="j-pw" data-i="password"></label>
-    <input type="password" id="j-pw" autocomplete="current-password">
-    <label class="chk"><input type="checkbox" id="j-rem" checked> <span data-i="remember"></span></label>
-    <div style="margin-top:16px"><button class="btn primary" id="j-go"><span data-i="enter"></span></button></div>
+    <div class="pick" data-pick="j"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button></div>
+    <div style="margin-top:16px"><button class="btn primary" id="j-go"><span data-i="accept"></span></button></div>
     <div class="err" id="j-err"></div>
+  </section>
+
+  <!-- this device has no key for the room -->
+  <section class="gate card" id="v-nokey" hidden>
+    <h2 data-i="noKeyTitle"></h2>
+    <p class="lead" data-i="noKeyLead"></p>
+    <div style="margin-top:16px"><a class="btn" href="./" id="nk-new"><span data-i="createOwn"></span></a></div>
   </section>
 
   <!-- room -->
@@ -231,6 +245,7 @@ ul.items li.on{border-color:var(--acc)}
             <select id="p-first"><option value="zh">中文</option><option value="pt">Português</option></select>
             <select id="p-min"><option value="15">2 × 15</option><option value="20">2 × 20</option><option value="25">2 × 25</option><option value="30">2 × 30</option><option value="45">2 × 45</option></select>
           </div>
+          <div class="talk" id="talk"></div>
         </div>
       </div>
 
@@ -280,7 +295,7 @@ ul.items li.on{border-color:var(--acc)}
   </main>
 </div>
 
-<div class="scrim" id="m-hist" hidden><div class="modal"><h3 data-i="history"></h3><ul class="hist" id="hist"></ul>
+<div class="scrim" id="m-hist" hidden><div class="modal"><h3 data-i="history"></h3><div id="trend"></div><ul class="hist" id="hist"></ul>
   <details style="margin-top:16px"><summary class="small muted" data-i="advanced"></summary>
     <p class="small muted" data-i="turnHint"></p>
     <label class="f" data-i="spaceName"></label><input type="text" id="a-name" maxlength="60">
@@ -290,6 +305,12 @@ ul.items li.on{border-color:var(--acc)}
     <div style="margin-top:10px"><button class="btn sm" id="a-save"><span data-i="save"></span></button></div>
   </details>
   <div style="margin-top:16px;text-align:right"><button class="btn" id="m-close"><span data-i="close"></span></button></div></div></div>
+<div class="scrim" id="m-inv" hidden><div class="modal"><h3 data-i="invTitle"></h3>
+  <p class="small muted" data-i="invLead"></p>
+  <div class="linkbox"><input type="text" id="i-link" readonly><button class="btn sm primary" id="i-copy"><span data-i="copy"></span></button></div>
+  <div class="err" id="i-err"></div>
+  <p class="small muted" data-i="invWarn"></p>
+  <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button class="btn sm" id="i-new"><span data-i="invNew"></span></button><button class="btn sm" id="i-close"><span data-i="close"></span></button></div></div></div>
 <div class="toast" id="toast" hidden></div>
 
 <script src="vendor/supabase.js"></script>
@@ -310,7 +331,18 @@ const T={
  tagline:["我们的语言学习空间","O nosso espaço de idiomas","Our language space"],
  history:["历次学习","Sessões","Sessions"], leave:["离开","Sair","Leave"],
  createTitle:["创建你们的空间","Criar o vosso espaço","Create your space"],
- createLead:["只属于你和语伴：视频通话、计时、词汇表、纠错记录和课后总结都在一个页面里。","Só para você e seu parceiro: chamada de vídeo, cronômetro, vocabulário, correções e resumo numa página só.","Just for you and your partner: video call, timer, vocabulary, corrections and summaries on one page."],
+ createLead:["只属于你和语伴：视频通话、计时、课文、词汇表、纠错记录和课后总结都在一个页面里。创建以后，用一次性链接邀请对方。","Só para você e seu parceiro: vídeo, cronômetro, texto, vocabulário, correções e resumo numa página. Depois, convide com um link de uso único.","Just for you and your partner: video, timer, text, words, corrections and summaries on one page. Then invite them with a one-time link."],
+ inviteTitle:["你被邀请了","Você foi convidado","You're invited"],
+ inviteLead:["这是一次性链接：点「接受邀请」后，这台设备就能直接进入，链接随即失效，别人再打开也进不来。","É um link de uso único: depois de «Aceitar», este aparelho entra direto e o link deixa de valer para qualquer outra pessoa.","This is a one-time link: after “Accept”, this device can enter directly, and the link stops working for anyone else."],
+ accept:["接受邀请","Aceitar convite","Accept invite"],
+ errUsed:["这个邀请链接已经用过了，或者已经过期。请对方再发一个新的。","Este convite já foi usado ou expirou. Peça um novo.","This invite has already been used or has expired. Ask for a new one."],
+ noKeyTitle:["这台设备还不能进入","Este aparelho ainda não tem acesso","This device can't enter yet"],
+ noKeyLead:["进入需要一次性邀请链接。请已经在空间里的人点「邀请」，生成一个新的发给你。","É preciso um link de convite de uso único. Peça a quem já está no espaço para tocar em «Convidar» e mandar um novo.","You need a one-time invite link. Ask someone in the space to tap “Invite” and send you a new one."],
+ createOwn:["创建一个新空间","Criar um espaço novo","Create a new space"],
+ invite:["邀请","Convidar","Invite"], invTitle:["一次性邀请链接","Link de convite de uso único","One-time invite link"],
+ invLead:["这个链接只能用一次，7 天内有效。可以发给语伴或老师，也可以用在你自己的另一台设备（比如手机）上。","Vale uma vez, por 7 dias. Mande ao parceiro ou professor, ou use no seu outro aparelho (por ex. o celular).","Works once, for 7 days. Send it to your partner or teacher, or use it on your own other device (e.g. your phone)."],
+ invWarn:["每个人、每台设备各用一个链接。如果对方说「链接已经用过了」，而不是他自己用的，说明链接被别人先打开了：请告诉我，可以换一把新钥匙。","Um link por pessoa e por aparelho. Se alguém disser «já foi usado» sem ter usado, outra pessoa abriu antes.","One link per person and device. If someone says “already used” but didn't use it, someone else opened it first."],
+ invNew:["再生成一个","Gerar outro","Make another"],
  spaceName:["空间名称","Nome do espaço","Space name"], password:["密码","Senha","Password"],
  pwHint:["至少 8 个字符。笔记会用这个密码在设备上加密，服务器看不到内容。密码忘了就打不开，请记好。","Pelo menos 8 caracteres. As notas são criptografadas no aparelho com esta senha; o servidor não vê o conteúdo. Sem a senha não dá para abrir.","At least 8 characters. Notes are encrypted on your device with this password; the server can't read them. Without it the space can't be opened."],
  create:["创建","Criar","Create"], yourLink:["你们的专属链接","O link de vocês","Your private link"], copy:["复制","Copiar","Copy"], copied:["已复制","Copiado","Copied"],
@@ -347,6 +379,10 @@ lesson:["课文","Texto","Text"], readMark:["阅读 · 标注","Ler · marcar","
  phComment:["批注（可不填）","Comentário (opcional)","Comment (optional)"], mark:["标记","Marcar","Mark"], toVocab:["加到词汇","Ao vocabulário","Add to words"], cancel:["取消","Cancelar","Cancel"],
  noMarks:["还没有标注。","Nenhuma marcação ainda.","No marks yet."], typingX:["{0} 正在编辑…","{0} está editando…","{0} is editing…"], marks:["标注","Marcações","Marks"],
  exportWord:["Word 文件 (.docx)","Arquivo Word (.docx)","Word file (.docx)"], exportPdf:["打印 / 存为 PDF","Imprimir / salvar PDF","Print / save as PDF"], exportMd:["Markdown 文本","Texto Markdown","Markdown text"],
+ talkTitle:["说话时长","Tempo de fala","Speaking time"], talkHint:["开始视频通话后，每台设备只听自己的麦克风来计时。","Durante a chamada, cada aparelho mede só o próprio microfone.","During the call, each device measures only its own microphone."],
+ other:["其他","outro","other"], shareIn:["{0}时段里，{1} 说了 {2}","Na parte de {0}, {1} falou {2}","In the {0} part, {1} spoke {2}"],
+ trendTitle:["每次学习你说了多久（深色 = 你在学的语言）","Quanto você falou por sessão (escuro = o idioma que você aprende)","How long you spoke per session (dark = the language you're learning)"],
+ talkLine:["你说了 {0}（{1} {2}）","Você falou {0} ({1} {2})","You spoke {0} ({1} {2})"],
  notesHint:["共同编辑：两个人可以同时写，几秒内同步。","Editado pelos dois ao mesmo tempo; sincroniza em segundos.","Shared: you can both write at the same time; it syncs within seconds."],
  phNotes:["Hoje eu…\n今天我……","Hoje eu…\n今天我……","Hoje eu…\n今天我……"],
  sumHint:["每人写几句：今天学到了什么，下次想练什么。","Cada um escreve: o que aprendeu hoje e o que quer praticar na próxima.","Each of you: what you learned today, what to practise next time."],
@@ -357,9 +393,9 @@ lesson:["课文","Texto","Text"], readMark:["阅读 · 标注","Ler · marcar","
  turnHint:["一般不用填。如果两边网络都比较严格、视频一直连不上，可以填一个 TURN 中继服务器（例如 Cloudflare 的免费额度）。","Normalmente não precisa. Se a chamada nunca conecta por causa da rede, informe um servidor TURN (p. ex. a cota grátis da Cloudflare).","Usually not needed. If the call never connects because of strict networks, add a TURN relay server (e.g. Cloudflare's free tier)."],
  newStarted:["{0} 开始了新的一次学习","{0} começou uma nova sessão","{0} started a new session"],
  sessionN:["第 {0} 次","Sessão {0}","Session {0}"], items:["{0} 个词 · {1} 处纠错","{0} palavras · {1} correções","{0} words · {1} corrections"],
- foot:["端到端加密：内容在设备上用你们的密码加密；视频直接在两台设备之间传输。","Criptografado de ponta a ponta: o conteúdo é cifrado com a senha de vocês; o vídeo vai direto entre os dois aparelhos.","End-to-end encrypted: content is encrypted with your password; video goes directly between your two devices."],
+ foot:["端到端加密：内容用只存在你们设备上的钥匙加密；视频直接在两台设备之间传输。","Criptografia de ponta a ponta: o conteúdo é cifrado com uma chave que só existe nos aparelhos de vocês; o vídeo vai direto entre os dois.","End-to-end encrypted: content is encrypted with a key that exists only on your devices; video goes directly between them."],
  confirmNew:["开始新的一次学习？这一次的内容会留在「历次学习」里。","Começar nova sessão? Esta fica guardada em «Sessões».","Start a new session? This one stays in “Sessions”."],
- confirmLeave:["离开空间？这台设备会忘记密码。","Sair do espaço? Este aparelho vai esquecer a senha.","Leave the space? This device will forget the password."],
+ confirmLeave:["离开空间？这台设备会删掉钥匙，以后要用新的一次性链接才能再进来。","Sair? Este aparelho apaga a chave e vai precisar de um novo link de convite.","Leave? This device deletes its key and will need a new one-time link to return."],
  notFound:["链接不完整。请用语伴发给你的完整链接。","Link incompleto. Use o link completo que recebeu.","The link is incomplete. Use the full link you received."]
 };
 const UIX={zh:0,pt:1,en:2};
@@ -381,8 +417,9 @@ const LNAME={zh:"中文",pt:"Português"};
 const te=new TextEncoder(), td=new TextDecoder();
 const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u))), unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 const hex=u=>[...new Uint8Array(u)].map(b=>b.toString(16).padStart(2,"0")).join("");
-async function deriveBits(room,pw){ const k=await crypto.subtle.importKey("raw",te.encode(pw),"PBKDF2",false,["deriveBits"]);
-  return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt:te.encode("ponte:"+room),iterations:210000,hash:"SHA-256"},k,256)); }
+const b64u=u=>b64(u).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""), unb64u=s=>unb64(s.replace(/-/g,"+").replace(/_/g,"/")+"===".slice((s.length+3)%4));
+async function sha(u8,suffix){ const a=new Uint8Array(u8.length+suffix.length); a.set(u8); a.set(te.encode(suffix),u8.length); return new Uint8Array(await crypto.subtle.digest("SHA-256",a)); }
+async function inviteKeys(secret){ const id=hex(await sha(secret,"|inv")); const key=await crypto.subtle.importKey("raw",await sha(secret,"|wrap"),"AES-GCM",false,["encrypt","decrypt"]); return {id,key}; }
 async function keysFrom(bits){
   const cat=(s)=>{ const a=new Uint8Array(bits.length+s.length); a.set(bits); a.set(te.encode(s),bits.length); return a; };
   const id=hex(await crypto.subtle.digest("SHA-256",cat("|id")));
@@ -400,7 +437,11 @@ const Store={
   async get(id){ if(LOCAL){ const v=localStorage.getItem("ponte-db-"+id); return v?JSON.parse(v):null; }
     const {data,error}=await sb().rpc("tandem_get",{p_id:id}); if(error) throw error; return data&&data[0]||null; },
   async put(id,data,rev){ if(LOCAL){ const cur=await this.get(id); if((cur?cur.rev:0)!==rev) return -1; const n=rev+1; localStorage.setItem("ponte-db-"+id,JSON.stringify({data,rev:n})); return n; }
-    const {data:r,error}=await sb().rpc("tandem_put",{p_id:id,p_data:data,p_rev:rev}); if(error) throw error; return r; }
+    const {data:r,error}=await sb().rpc("tandem_put",{p_id:id,p_data:data,p_rev:rev}); if(error) throw error; return r; },
+  async inviteCreate(id,wrapped){ if(LOCAL){ localStorage.setItem("ponte-inv-"+id,wrapped); return true; }
+    const {error}=await sb().rpc("tandem_invite_create",{p_id:id,p_wrapped:wrapped}); if(error) throw error; return true; },
+  async inviteRedeem(id){ if(LOCAL){ const v=localStorage.getItem("ponte-inv-"+id); localStorage.removeItem("ponte-inv-"+id); return v; }
+    const {data,error}=await sb().rpc("tandem_invite_redeem",{p_id:id}); if(error) throw error; return data||null; }
 };
 let BUS=null;
 function busOpen(name,onMsg){
@@ -424,7 +465,7 @@ const lww=(a,b)=>!a?b:!b?a:((b.t||0)>(a.t||0)?b:a);
 function mergeItems(a,b){ const o=Object.assign({},a||{}); for(const k in (b||{})) o[k]=lww(o[k],b[k]); return o; }
 function mergeSession(a,b){ if(!a) return b; if(!b) return a;
   return {id:a.id,n:Math.min(a.n,b.n)||a.n,created:Math.min(a.created,b.created),t:Math.max(a.t||0,b.t||0),plan:lww(a.plan,b.plan),timer:lww(a.timer,b.timer),
-    vocab:mergeItems(a.vocab,b.vocab),fix:mergeItems(a.fix,b.fix),notes:lww(a.notes,b.notes),sum:mergeItems(a.sum,b.sum),y:mergeY(a.y,b.y)}; }
+    vocab:mergeItems(a.vocab,b.vocab),fix:mergeItems(a.fix,b.fix),notes:lww(a.notes,b.notes),sum:mergeItems(a.sum,b.sum),talk:mergeItems(a.talk,b.talk),y:mergeY(a.y,b.y)}; }
 function mergeY(a,b){ if(!a) return b; if(!b||a===b) return a; try{ return b64(Y.mergeUpdates([unb64(a),unb64(b)])); }catch(e){ return a; } }
 function mergeRoom(a,b){ if(!a) return b; if(!b) return a; const s=Object.assign({},a.sessions);
   for(const k in b.sessions) s[k]=mergeSession(s[k],b.sessions[k]);
@@ -447,7 +488,7 @@ async function saveNow(){
   }catch(e){ console.warn(e); $("#n-saved").textContent=t("saveFail"); setTimeout(saveSoon,8000); }
   finally{ saving=false; }
 }
-window.addEventListener("beforeunload",()=>{ if(dirty) saveNow(); });
+window.addEventListener("beforeunload",()=>{ try{ commitTalk(); }catch(e){} if(dirty) saveNow(); });
 
 /* a change: apply locally, tell the partner, save */
 function change(kind,data){ applyChange(kind,data); send("chg",{kind,data}); saveSoon(); renderAll(); }
@@ -459,61 +500,83 @@ function applyChange(kind,d){
   const s=R.sessions[d.sid]; if(!s) return;
   if(kind==="vocab"||kind==="fix") s[kind][d.item.id]=lww(s[kind][d.item.id],d.item);
   else if(kind==="sum") s.sum[d.key]=lww(s.sum[d.key],d.item);
+  else if(kind==="talk"){ s.talk=s.talk||{}; s.talk[d.key]=lww(s.talk[d.key],d.item); }
   else if(kind==="notes"||kind==="plan"||kind==="timer") s[kind]=lww(s[kind],d.item);
 }
 
 /* ---------- views ---------- */
-function show(v){ ["create","join","room"].forEach(x=>$("#v-"+x).hidden=x!==v); $("#b-hist").hidden=$("#b-leave").hidden=v!=="room"; }
-function roomFromHash(){ const m=location.hash.match(/r=([a-z0-9]{12,40})/); return m?m[1]:null; }
+let KEYBITS=null;
+function show(v){ ["create","join","nokey","room"].forEach(x=>$("#v-"+x).hidden=x!==v); $("#b-hist").hidden=$("#b-leave").hidden=$("#b-inv").hidden=v!=="room"; }
+function roomFromHash(){ const m=location.hash.match(/[#&]r=([a-z0-9]{12,40})/); return m?m[1]:null; }
+function inviteFromHash(){ const m=location.hash.match(/[#&]i=([A-Za-z0-9_-]{16,64})/); return m?m[1]:null; }
+const savedRoom=r=>{ try{ return JSON.parse(localStorage.getItem("ponte-room-"+r)||"null"); }catch(e){ return null; } };
+const myDefaults=()=>{ try{ return JSON.parse(localStorage.getItem("ponte-me")||"null")||{}; }catch(e){ return {}; } };
+function pickVal(w){ const b=document.querySelector(`[data-pick="${w}"] button[aria-pressed=true]`); return b?b.dataset.l:null; }
+function prefill(w,nameEl){ const d=myDefaults(); if(d.name) $(nameEl).value=d.name; if(d.learn) $$(`[data-pick="${w}"] button`).forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===d.learn)); }
+$$("[data-pick]").forEach(g=>g.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; [...g.querySelectorAll("button")].forEach(x=>x.setAttribute("aria-pressed",x===b)); }));
 
 async function boot(){
   applyUI();
+  if(inviteFromHash()){ show("join"); prefill("j","#j-name"); return; }
   ROOM=roomFromHash();
-  if(!ROOM){ show("create"); return; }
-  let saved=null; try{ saved=JSON.parse(localStorage.getItem("ponte-room-"+ROOM)||"null"); }catch(e){}
-  if(saved&&saved.bits){ try{ await enterWith(unb64(saved.bits),saved.me,false); return; }catch(e){ console.warn(e); } }
-  show("join"); prefillJoin(saved&&saved.me);
+  if(!ROOM){ let last=null; try{ last=localStorage.getItem("ponte-last"); }catch(e){} if(last&&savedRoom(last)){ location.hash="r="+last; return; } show("create"); prefill("c","#c-me"); return; }
+  const sv=savedRoom(ROOM);
+  if(sv&&sv.bits){ try{ await enterWith(unb64(sv.bits),sv.me); return; }catch(e){ console.warn(e); if(e&&e.code==="gone"){ show("nokey"); return; } toast(t("errNet")); } }
+  show("nokey");
 }
-function prefillJoin(me){ let p=null; try{ p=JSON.parse(localStorage.getItem("ponte-me")||"null"); }catch(e){} p=me||p; if(p){ $("#j-name").value=p.name||""; if(p.learn) $$("#j-learn button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===p.learn)); } }
+function remember(bits,me){ try{ localStorage.setItem("ponte-me",JSON.stringify(me)); localStorage.setItem("ponte-room-"+ROOM,JSON.stringify({bits:b64(bits),me})); localStorage.setItem("ponte-last",ROOM); }catch(e){} }
 
-/* create */
+/* create: a random 256-bit key that only exists on the members' devices */
 $("#c-go").addEventListener("click",async()=>{
-  const name=$("#c-name").value.trim()||"桥 · Ponte", pw=$("#c-pw").value; $("#c-err").textContent="";
-  if(pw.length<8){ $("#c-err").textContent=t("errPw"); return; }
+  const name=$("#c-name").value.trim()||"桥 · Ponte", me=$("#c-me").value.trim(), learn=pickVal("c"), err=$("#c-err"); err.textContent="";
+  if(!me){ err.textContent=t("errName"); return; } if(!learn){ err.textContent=t("errLearn"); return; }
   $("#c-go").disabled=true;
   try{
-    ROOM=uid()+uid(); const bits=await deriveBits(ROOM,pw); K=await keysFrom(bits);
-    const doc=blankRoom(name); const r=await Store.put(K.id,await enc(doc),0);
-    if(r<0){ $("#c-err").textContent=t("errExists"); return; }
-    const link=location.origin+location.pathname+location.search+"#r="+ROOM;
-    $("#c-link").value=link; $("#c-done").hidden=false; $("#c-go").hidden=true;
-    $("#c-enter").onclick=()=>{ location.hash="r="+ROOM; show("join"); prefillJoin(); $("#j-pw").value=pw; };
-  }catch(e){ console.warn(e); $("#c-err").textContent=t("errNet"); }
+    ROOM=uid()+uid(); const bits=crypto.getRandomValues(new Uint8Array(32)); K=await keysFrom(bits);
+    const r=await Store.put(K.id,await enc(blankRoom(name)),0); if(r<0){ err.textContent=t("errExists"); return; }
+    remember(bits,{name:me,learn}); history.replaceState(null,"","#r="+ROOM);
+    await enterWith(bits,{name:me,learn}); openInvite();
+  }catch(e){ console.warn(e); err.textContent=t("errNet"); }
   finally{ $("#c-go").disabled=false; }
 });
-$("#c-copy").addEventListener("click",async()=>{ try{ await navigator.clipboard.writeText($("#c-link").value); toast(t("copied")); }catch(e){ $("#c-link").select(); } });
 
-/* join */
-$("#j-learn").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; $$("#j-learn button").forEach(x=>x.setAttribute("aria-pressed",x===b)); });
+/* accept a one-time invite: the server hands out the wrapped key once and deletes the invite */
 $("#j-go").addEventListener("click",async()=>{
-  const name=$("#j-name").value.trim(), lb=$("#j-learn button[aria-pressed=true]"), pw=$("#j-pw").value, err=$("#j-err"); err.textContent="";
-  if(!name){ err.textContent=t("errName"); return; } if(!lb){ err.textContent=t("errLearn"); return; } if(pw.length<8){ err.textContent=t("errPw"); return; }
+  const name=$("#j-name").value.trim(), learn=pickVal("j"), err=$("#j-err"); err.textContent="";
+  if(!name){ err.textContent=t("errName"); return; } if(!learn){ err.textContent=t("errLearn"); return; }
   $("#j-go").disabled=true;
-  try{ const bits=await deriveBits(ROOM,pw); await enterWith(bits,{name,learn:lb.dataset.l},$("#j-rem").checked); }
-  catch(e){ err.textContent=e&&e.code==="wrong"?t("errWrong"):t("errNet"); console.warn(e); }
+  try{
+    const secret=unb64u(inviteFromHash()), ik=await inviteKeys(secret);
+    const wrapped=await Store.inviteRedeem(ik.id); if(!wrapped){ err.textContent=t("errUsed"); return; }
+    const [a,b]=wrapped.split("."); const inv=JSON.parse(td.decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:unb64(a)},ik.key,unb64(b))));
+    ROOM=inv.room; const bits=unb64(inv.bits); remember(bits,{name,learn}); history.replaceState(null,"","#r="+ROOM);
+    await enterWith(bits,{name,learn});
+  }catch(e){ console.warn(e); err.textContent=t("errNet"); }
   finally{ $("#j-go").disabled=false; }
 });
-$("#j-pw").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#j-go").click(); });
 
-async function enterWith(bits,me,remember){
-  K=await keysFrom(bits);
-  const row=await Store.get(K.id); if(!row) throw {code:"wrong"};
+async function makeInvite(){
+  const secret=crypto.getRandomValues(new Uint8Array(18)), ik=await inviteKeys(secret), iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},ik.key,te.encode(JSON.stringify({room:ROOM,bits:b64(KEYBITS)})));
+  await Store.inviteCreate(ik.id,b64(iv)+"."+b64(ct));
+  return location.origin+location.pathname+location.search+"#i="+b64u(secret);
+}
+async function openInvite(){ $("#m-inv").hidden=false; $("#i-link").value=""; $("#i-err").textContent=""; try{ $("#i-link").value=await makeInvite(); }catch(e){ console.warn(e); $("#i-err").textContent=t("errNet"); } }
+$("#b-inv").addEventListener("click",openInvite); $("#i-new").addEventListener("click",openInvite);
+$("#i-close").addEventListener("click",()=>$("#m-inv").hidden=true);
+$("#i-copy").addEventListener("click",async()=>{ const v=$("#i-link").value; if(!v) return; try{ if(navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent)) await navigator.share({url:v}); else { await navigator.clipboard.writeText(v); toast(t("copied")); } }catch(e){ $("#i-link").select(); } });
+
+let started=false;
+async function enterWith(bits,me){
+  K=await keysFrom(bits); KEYBITS=bits;
+  const row=await Store.get(K.id); if(!row) throw {code:"gone"};
   R=await dec(row.data); REV=row.rev;
   ME={id:uid(),name:me.name,learn:me.learn};
-  try{ localStorage.setItem("ponte-me",JSON.stringify(me)); if(remember!==false) localStorage.setItem("ponte-room-"+ROOM,JSON.stringify({bits:b64(bits),me})); }catch(e){}
-  show("room"); openBus(); renderAll(); renderLessonMode(); callUI(); setInterval(tick,500); setInterval(()=>presence(),9000); setInterval(prunePeers,5000);
+  try{ localStorage.setItem("ponte-last",ROOM); }catch(e){}
+  show("room"); openBus(); renderAll(); renderLessonMode(); callUI();
+  if(!started){ started=true; setInterval(tick,500); setInterval(()=>presence(),9000); setInterval(prunePeers,5000); }
 }
-$("#b-leave").addEventListener("click",()=>{ if(!confirm(t("confirmLeave"))) return; try{ localStorage.removeItem("ponte-room-"+ROOM); }catch(e){} send("bye",{}); hangup(); location.reload(); });
+$("#b-leave").addEventListener("click",()=>{ if(!confirm(t("confirmLeave"))) return; try{ localStorage.removeItem("ponte-room-"+ROOM); localStorage.removeItem("ponte-last"); }catch(e){} send("bye",{}); hangup(); location.href=location.pathname+location.search; });
 
 /* ---------- presence + messages ---------- */
 function openBus(){ BUS=busOpen(K.id.slice(0,40),onMsg); presence(true); }
@@ -532,6 +595,7 @@ async function handleMsg(m){
   if(b.type==="y"){ if(R.sessions[b.sid]) applyY(b.sid,unb64(b.u)); return; }
   if(b.type==="typing"){ showTyping(b.where,(p&&p.name)||""); return; }
   if(b.type==="chg"){ const before=R.cur.v; if(b.kind==="session"&&b.data&&b.data.y) { /* merged in applyChange */ } applyChange(b.kind,b.data); if(b.kind==="cur"&&R.cur.v!==before) toast(t("newStarted",(p&&p.name)||"…")); renderAll(true); return; }
+  if(b.type==="spk"){ PEERSPK.set(from,!!b.v); return; }
   if(b.type==="hang"){ if(PEER===from) closePC(); return; }
   if(b.type==="sig") return onSignal(from,b);
 }
@@ -555,7 +619,7 @@ function iceServers(){ const s=[{urls:["stun:stun.cloudflare.com:3478","stun:stu
 async function startCall(){
   try{ LOCALSTREAM=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:{width:{ideal:1280},height:{ideal:720},facingMode:"user"}}); }
   catch(e){ try{ LOCALSTREAM=await navigator.mediaDevices.getUserMedia({audio:true,video:false}); toast(t("noCam")); }catch(e2){ toast(t("noCam")); return; } }
-  const lv=$("#lv"); lv.srcObject=LOCALSTREAM; lv.hidden=false;
+  const lv=$("#lv"); lv.srcObject=LOCALSTREAM; lv.hidden=false; startVAD(LOCALSTREAM);
   presence(); for(const [id,p] of PEERS) if(p.call){ startPC(id); break; }
   callUI();
 }
@@ -584,7 +648,7 @@ async function onSignal(from,b){
   }catch(e){ console.warn(e); }
 }
 function closePC(){ if(PC){ try{ PC.close(); }catch(e){} } PC=null; PEER=null; camSender=null; $("#rv").srcObject=null; callUI(); }
-function hangup(){ if(PC&&BUS) send("hang",{}); closePC(); if(SCREEN){ SCREEN.getTracks().forEach(x=>x.stop()); SCREEN=null; } if(LOCALSTREAM){ LOCALSTREAM.getTracks().forEach(x=>x.stop()); LOCALSTREAM=null; } $("#lv").srcObject=null; $("#lv").hidden=true; if(BUS) presence(); callUI(); }
+function hangup(){ stopVAD(); if(PC&&BUS) send("hang",{}); closePC(); if(SCREEN){ SCREEN.getTracks().forEach(x=>x.stop()); SCREEN=null; } if(LOCALSTREAM){ LOCALSTREAM.getTracks().forEach(x=>x.stop()); LOCALSTREAM=null; } $("#lv").srcObject=null; $("#lv").hidden=true; if(BUS) presence(); callUI(); }
 $("#b-call").addEventListener("click",startCall);
 $("#b-end").addEventListener("click",hangup);
 $("#b-mic").addEventListener("click",()=>{ const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0]; if(a){ a.enabled=!a.enabled; callUI(); } });
@@ -630,7 +694,7 @@ function tick(){
   const tm=S().timer; $("#t-start").textContent=tm.run?t("pause"):(tm.acc>0&&!over?t("resume"):t("start"));
   const key=S().id+":"+(over?"end":idx);
   if(tm.run&&lastPhase&&lastPhase!==key&&lastPhase.startsWith(S().id)){ chime(over?3:2); toast(over?t("done"):t("switchTo",LNAME[cur])); }
-  lastPhase=key;
+  lastPhase=key; renderTalk();
   if(over&&tm.run) change("timer",{sid:S().id,item:{run:false,at:0,acc:tot,t:now()}});
 }
 function chime(n){ try{ const ac=new (window.AudioContext||window.webkitAudioContext)(); for(let i=0;i<n;i++){ const o=ac.createOscillator(), g=ac.createGain(); o.frequency.value=i%2?660:880; o.connect(g); g.connect(ac.destination); const s=ac.currentTime+i*0.35; g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(0.25,s+0.02); g.gain.exponentialRampToValueAtTime(0.0001,s+0.3); o.start(s); o.stop(s+0.32); } }catch(e){} }
@@ -761,18 +825,65 @@ function exportPK(kind){
   const F=sorted(s.fix).reverse(); if(F.length) blocks.push({label:t("fixes"),paras:F.map(x=>[(x.bad?x.bad+" → ":"")+x.good+(x.note?"  ("+x.note+")":"")])});
   const nt=o.notes.toString(); if(nt.trim()) blocks.push({label:t("notes"),paras:P(nt)});
   const sums=Object.values(s.sum).filter(x=>x.text&&x.text.trim()); if(sums.length) blocks.push({label:t("summary"),paras:sums.flatMap(x=>[[x.name+":"],...P(x.text)])});
+  const TT=Object.values(talkOf(s)); if(TT.length) blocks.push({label:t("talkTitle"),paras:TT.map(x=>[x.name+": "+mmss(x.zh+x.pt+x.free)+"  (中文 "+mmss(x.zh)+" · Português "+mmss(x.pt)+(x.free?" · "+t("other")+" "+mmss(x.free):"")+")"])});
   const doc={title:name+" · "+t("sessionN",s.n),meta:d,lang:"zh-CN",paras:P(txt),
     gloss:{label:t("vocab"),rows:sorted(s.vocab).reverse().map(x=>({w:x.w,m:[x.m||""]}))},blocks};
   const opt={title:`${name} ${d}`,filename:`Ponte ${d} ${t("sessionN",s.n)}`,ea:"zh",brand:{name:"桥 · Ponte",url:location.host+location.pathname,accent:"#2c6b64",docFont:"Georgia"}};
   if(kind==="docx") PrintKit.docx([doc],opt); else PrintKit.print([doc],opt);
 }
 
+
+/* ---------- speaking time: each device listens only to its own microphone ---------- */
+let VAD=null, SPK=false; const PEERSPK=new Map(); const LIVE={sid:null,zh:0,pt:0,free:0}; let talkSaveT=0;
+function talkBase(sid){ const it=(R.sessions[sid].talk||{})[ME.name]; return it?{zh:it.zh||0,pt:it.pt||0,free:it.free||0}:{zh:0,pt:0,free:0}; }
+function talkBucket(){ const tm=S().timer; return (tm.run||tm.acc>0)?curLang():"free"; }
+function startVAD(stream){
+  stopVAD(); const tr=stream.getAudioTracks()[0]; if(!tr) return;
+  let ac; try{ ac=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return; }
+  const src=ac.createMediaStreamSource(new MediaStream([tr])), an=ac.createAnalyser(); an.fftSize=1024; src.connect(an);
+  const buf=new Float32Array(an.fftSize); let floor=0.004, last=now(), hang=0;
+  const iv=setInterval(()=>{ const dt=Math.min(500,now()-last); last=now(); if(ac.state==="suspended") ac.resume().catch(()=>{});
+    if(!tr.enabled||tr.readyState!=="live"){ setSpk(false); return; }
+    an.getFloatTimeDomainData(buf); let sum=0; for(let i=0;i<buf.length;i++) sum+=buf[i]*buf[i]; const rms=Math.sqrt(sum/buf.length);
+    floor=rms<floor?floor*0.8+rms*0.2:floor*0.998+rms*0.002; // slow-rising noise floor
+    if(rms>Math.max(0.012,floor*3)) hang=400; else hang-=dt;
+    const sp=hang>0; if(sp) addTalk(dt); setSpk(sp); },100);
+  VAD={ac,iv};
+}
+function stopVAD(){ if(!VAD) return; clearInterval(VAD.iv); try{ VAD.ac.close(); }catch(e){} VAD=null; setSpk(false); commitTalk(); }
+function addTalk(dt){ const sid=R.cur.v; if(LIVE.sid!==sid){ commitTalk(); Object.assign(LIVE,{sid},talkBase(sid)); } LIVE[talkBucket()]+=dt; if(now()-talkSaveT>5000) commitTalk(); }
+function commitTalk(){ if(!LIVE.sid||!R||!R.sessions[LIVE.sid]) return; talkSaveT=now();
+  const b=talkBase(LIVE.sid); if(b.zh===LIVE.zh&&b.pt===LIVE.pt&&b.free===LIVE.free) return;
+  change("talk",{sid:LIVE.sid,key:ME.name,item:{name:ME.name,learn:ME.learn,zh:Math.round(LIVE.zh),pt:Math.round(LIVE.pt),free:Math.round(LIVE.free),t:now()}}); }
+function setSpk(v){ if(v===SPK) return; SPK=v; send("spk",{v}); }
+const mmss=ms=>{ const s=Math.round(ms/1000), m=Math.floor(s/60); return m>=60?Math.floor(m/60)+":"+String(m%60).padStart(2,"0")+":"+String(s%60).padStart(2,"0"):m+":"+String(s%60).padStart(2,"0"); };
+function talkOf(s){ const out={}; Object.values(s.talk||{}).forEach(x=>{ out[x.name]={name:x.name,learn:x.learn,zh:x.zh||0,pt:x.pt||0,free:x.free||0}; });
+  if(LIVE.sid===s.id) out[ME.name]={name:ME.name,learn:ME.learn,zh:LIVE.zh,pt:LIVE.pt,free:LIVE.free}; return out; }
+function renderTalk(){
+  const s=S(), T0=talkOf(s), names=[...new Set([ME.name,...[...PEERS.values()].map(p=>p.name),...Object.keys(T0)])];
+  const rows=names.map(n=>{ const x=T0[n]||{zh:0,pt:0,free:0}; return {n,x,tot:x.zh+x.pt+x.free}; });
+  const max=Math.max(60000,...rows.map(r=>r.tot)); const spk=n=>n===ME.name?SPK:[...PEERS.entries()].some(([id,p])=>p.name===n&&PEERSPK.get(id));
+  let h=`<h4><span>${esc(t("talkTitle"))}</span></h4>`+rows.map(r=>`<div class="trow"><span class="nm"><i class="${spk(r.n)?"sp":""}"></i>${esc(r.n)}</span><span class="tbar">${["zh","pt","free"].map(k=>r.x[k]?`<b class="${k}" style="width:${r.x[k]/max*100}%"></b>`:"").join("")}</span><span class="v">${mmss(r.tot)}</span></div>`).join("");
+  // in each language's part: who spoke how much
+  const sh=["zh","pt"].map(l=>{ const tot=rows.reduce((a,r)=>a+r.x[l],0); if(tot<20000) return ""; const learner=rows.find(r=>((T0[r.n]||{}).learn||(r.n===ME.name?ME.learn:([...PEERS.values()].find(p=>p.name===r.n)||{}).learn))===l)||rows[0];
+    return `<div class="share">${esc(t("shareIn",LNAME[l],learner.n,""))}<b>${Math.round(learner.x[l]/tot*100)}%</b> · ${mmss(learner.x[l])}</div>`; }).join("");
+  h+=sh||`<div class="share">${esc(t("talkHint"))}</div>`;
+  $("#talk").innerHTML=h;
+}
+function renderTrend(){
+  const arr=Object.values(R.sessions).sort((a,b)=>a.created-b.created).slice(-12);
+  const data=arr.map(s=>{ const x=(s.talk||{})[ME.name]||{zh:0,pt:0,free:0}; return {s,mine:x[ME.learn]||0,other:(x.zh||0)+(x.pt||0)+(x.free||0)-(x[ME.learn]||0)}; });
+  if(!data.some(d=>d.mine+d.other>0)){ $("#trend").innerHTML=""; return; }
+  const max=Math.max(...data.map(d=>d.mine+d.other),60000);
+  $("#trend").innerHTML=`<div class="small muted" style="margin-bottom:6px">${esc(t("trendTitle"))}</div><div class="trend">${data.map(d=>`<div class="r"><span>${esc(t("sessionN",d.s.n))}</span><span class="tbar"><b class="${ME.learn}" style="width:${d.mine/max*100}%"></b><b class="free" style="width:${d.other/max*100}%"></b></span><span class="v">${mmss(d.mine+d.other)}</span></div>`).join("")}</div>`;
+}
+
 /* ---------- sessions: new, history, export ---------- */
 $("#b-new").addEventListener("click",()=>{ if(!confirm(t("confirmNew"))) return; const n=Math.max(...Object.values(R.sessions).map(x=>x.n||0))+1; const s=blankSession(n); s.plan=Object.assign({},S().plan,{t:now()});
   change("session",s); change("cur",{v:s.id,t:now()}); });
 $("#b-hist").addEventListener("click",()=>{ const arr=Object.values(R.sessions).sort((a,b)=>b.created-a.created);
-  $("#hist").innerHTML=arr.map(s=>`<li><button data-open="${s.id}" aria-current="${s.id===R.cur.v}"><span><b>${esc(t("sessionN",s.n))}</b> · ${esc(new Date(s.created).toLocaleDateString())}</span><span class="muted small">${esc(t("items",sorted(s.vocab).length,sorted(s.fix).length))}</span></button></li>`).join("");
-  $("#a-name").value=R.name.v||""; $("#a-turl").value=R.turn.url||""; $("#a-tuser").value=R.turn.user||""; $("#a-tpass").value=R.turn.pass||""; $("#m-hist").hidden=false; });
+  $("#hist").innerHTML=arr.map(s=>`<li><button data-open="${s.id}" aria-current="${s.id===R.cur.v}"><span><b>${esc(t("sessionN",s.n))}</b> · ${esc(new Date(s.created).toLocaleDateString())}</span><span class="muted small">${esc(t("items",sorted(s.vocab).length,sorted(s.fix).length))}${(s.talk||{})[ME.name]?" · "+esc(mmss(["zh","pt","free"].reduce((a,k)=>a+((s.talk[ME.name][k])||0),0))):""}</span></button></li>`).join("");
+  renderTrend(); $("#a-name").value=R.name.v||""; $("#a-turl").value=R.turn.url||""; $("#a-tuser").value=R.turn.user||""; $("#a-tpass").value=R.turn.pass||""; $("#m-hist").hidden=false; });
 $("#hist").addEventListener("click",e=>{ const b=e.target.closest("[data-open]"); if(!b) return; change("cur",{v:b.dataset.open,t:now()}); $("#m-hist").hidden=true; });
 $("#m-close").addEventListener("click",()=>$("#m-hist").hidden=true);
 $("#m-hist").addEventListener("click",e=>{ if(e.target.id==="m-hist") $("#m-hist").hidden=true; });
@@ -782,6 +893,7 @@ function exportMd(){
   const s=S(), d=new Date(s.created).toISOString().slice(0,10), L=x=>x.l==="zh"?"中文":"PT";
   let md=`# ${R.name.v||"Ponte"} — ${t("sessionN",s.n)} · ${d}\n\n## ${t("vocab")}\n`+sorted(s.vocab).reverse().map(x=>`- [${L(x)}] **${x.w}**${x.m?" — "+x.m:""}`).join("\n");
   md+=`\n\n## ${t("fixes")}\n`+sorted(s.fix).reverse().map(x=>`- [${L(x)}] ${x.bad?"~~"+x.bad+"~~ → ":""}**${x.good}**${x.note?" ("+x.note+")":""}`).join("\n");
+  md+=`\n\n## ${t("talkTitle")}\n`+Object.values(talkOf(s)).map(x=>`- ${x.name}: ${mmss(x.zh+x.pt+x.free)} (中文 ${mmss(x.zh)} · Português ${mmss(x.pt)})`).join("\n");
   md+=`\n\n## ${t("notes")}\n${yOf(s.id).notes.toString()}\n\n## ${t("summary")}\n`+Object.values(s.sum).map(x=>`### ${x.name}\n${x.text}`).join("\n\n")+"\n";
   const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([md],{type:"text/markdown"})); a.download=`ponte-${d}-${s.n}.md`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
 }
