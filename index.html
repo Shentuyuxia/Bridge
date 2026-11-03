@@ -154,6 +154,10 @@ ul.items li.on{border-color:var(--acc)}
 .trend{display:grid;gap:5px;margin:0 0 14px}
 .trend .r{display:grid;grid-template-columns:5.5rem minmax(0,1fr) 3.6rem;gap:8px;align-items:center;font-size:12.5px}
 .trend .r .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+/* whiteboard */
+#bd{width:100%;aspect-ratio:4/3;display:block;border-radius:12px;border:1px solid var(--line);touch-action:none;cursor:crosshair;background:#fdfdfb}
+#b-cols button{width:24px;height:24px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);padding:0}
+#b-cols button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--acc)}
 /* modal */
 .scrim{position:fixed;inset:0;background:rgba(10,15,17,.45);display:grid;place-items:center;padding:16px;z-index:50}
 .modal{background:var(--card);border-radius:var(--r);max-width:560px;width:100%;max-height:85vh;overflow:auto;padding:18px}
@@ -253,6 +257,7 @@ ul.items li.on{border-color:var(--acc)}
         <div class="sessbar"><span class="t" id="s-title"></span><span class="muted small" id="s-date"></span><span class="sp"></span><button class="btn sm" id="b-new"><span data-i="newSession"></span></button><button class="btn sm" id="b-export"><span data-i="export"></span></button></div>
         <div class="tabs" role="tablist">
           <button role="tab" data-tab="text" aria-selected="true"><span data-i="lesson"></span></button>
+          <button role="tab" data-tab="board"><span data-i="board"></span></button>
           <button role="tab" data-tab="vocab"><span data-i="vocab"></span><span class="n" id="n-vocab">0</span></button>
           <button role="tab" data-tab="fix"><span data-i="fixes"></span><span class="n" id="n-fix">0</span></button>
           <button role="tab" data-tab="notes"><span data-i="notes"></span></button>
@@ -269,6 +274,11 @@ ul.items li.on{border-color:var(--acc)}
             <div class="r"><button class="btn sm primary" id="sel-mark"><span data-i="mark"></span></button><button class="btn sm" id="sel-vocab"><span data-i="toVocab"></span></button><button class="btn sm ghost" id="sel-x"><span data-i="cancel"></span></button></div>
           </div>
           <ul class="items" id="l-marks"></ul>
+        </div>
+        <div id="p-board" hidden>
+          <div class="xtools"><div class="seg" id="b-tools"><button data-bt="pen"><span data-i="pen"></span></button><button data-bt="eraser"><span data-i="eraser"></span></button></div><span id="b-cols" style="display:flex;gap:6px;align-items:center"></span><span class="sp"></span><button class="btn sm" id="b-undo"><span data-i="undo"></span></button><button class="btn sm" id="b-clear"><span data-i="clearBoard"></span></button></div>
+          <canvas id="bd"></canvas>
+          <div class="small muted" style="margin-top:6px" data-i="boardHint"></div>
         </div>
         <div id="p-vocab" hidden>
           <div class="add"><input type="text" id="v-w" data-ph="phWord"><input type="text" id="v-m" data-ph="phMeaning"><button class="btn primary sm" id="v-add"><span data-i="add"></span></button></div>
@@ -383,6 +393,8 @@ lesson:["课文","Texto","Text"], readMark:["阅读 · 标注","Ler · marcar","
  other:["其他","outro","other"], shareIn:["{0}时段里，{1} 说了 {2}","Na parte de {0}, {1} falou {2}","In the {0} part, {1} spoke {2}"],
  trendTitle:["每次学习你说了多久（深色 = 你在学的语言）","Quanto você falou por sessão (escuro = o idioma que você aprende)","How long you spoke per session (dark = the language you're learning)"],
  talkLine:["你说了 {0}（{1} {2}）","Você falou {0} ({1} {2})","You spoke {0} ({1} {2})"],
+ board:["白板","Quadro","Board"], pen:["画笔","Caneta","Pen"], eraser:["橡皮","Borracha","Eraser"], undo:["撤销","Desfazer","Undo"], clearBoard:["清空","Limpar","Clear"],
+ boardHint:["两个人都能画，画的内容实时同步，并保存在这次学习里。橡皮：点一下或拖过一笔就删掉它。","Os dois podem desenhar; o desenho sincroniza e fica salvo nesta sessão. Borracha: toque ou passe sobre um traço para apagá-lo.","Both of you can draw; it syncs live and is saved in this session. Eraser: tap or drag across a stroke to delete it."],
  notesHint:["共同编辑：两个人可以同时写，几秒内同步。","Editado pelos dois ao mesmo tempo; sincroniza em segundos.","Shared: you can both write at the same time; it syncs within seconds."],
  phNotes:["Hoje eu…\n今天我……","Hoje eu…\n今天我……","Hoje eu…\n今天我……"],
  sumHint:["每人写几句：今天学到了什么，下次想练什么。","Cada um escreve: o que aprendeu hoje e o que quer praticar na próxima.","Each of you: what you learned today, what to practise next time."],
@@ -728,7 +740,7 @@ function renderAll(remote){
   if(!R) return; const s=S();
   $("#title").textContent=R.name.v||"桥 · Ponte"; document.title=(R.name.v||"桥")+" · Ponte";
   $("#s-title").textContent=t("sessionN",s.n); $("#s-date").textContent=new Date(s.created).toLocaleDateString(UIL==="zh"?"zh-CN":UIL==="pt"?"pt-BR":"en-GB",{weekday:"short",day:"numeric",month:"short"});
-  $$(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===TAB)); ["text","vocab","fix","notes","sum"].forEach(k=>$("#p-"+k).hidden=k!==TAB);
+  $$(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===TAB)); ["text","board","vocab","fix","notes","sum"].forEach(k=>$("#p-"+k).hidden=k!==TAB);
   const cl=guessL($("#v-w").value)||curLang(); const fl=guessL($("#f-good").value||$("#f-bad").value)||curLang(); $$("[data-vl]").forEach(b=>b.setAttribute("aria-pressed",(VL||cl)===b.dataset.vl)); $$("[data-fl]").forEach(b=>b.setAttribute("aria-pressed",(FL||fl)===b.dataset.fl));
   const V=sorted(s.vocab), F=sorted(s.fix); $("#n-vocab").textContent=V.length; $("#n-fix").textContent=F.length;
   $("#l-vocab").innerHTML=V.length?V.map(x=>`<li><span class="dot ${x.l}"></span><div><div class="w" lang="${x.l==="zh"?"zh-CN":"pt-BR"}">${esc(x.w)}</div>${x.m?`<div class="m">${esc(x.m)}</div>`:""}<div class="by">${esc(t("by",x.by||""))}</div></div><button class="x" data-del="vocab:${x.id}" aria-label="delete">×</button></li>`).join(""):`<li class="empty" style="border:0;background:none;display:block">${esc(t("noWords"))}</li>`;
@@ -748,7 +760,7 @@ function renderAll(remote){
 const YD=new Map(); // session id → {doc,text,notes,marks}
 function yOf(sid){
   if(YD.has(sid)) return YD.get(sid);
-  const doc=new Y.Doc(), o={doc,text:doc.getText("text"),notes:doc.getText("notes"),marks:doc.getMap("marks")}; YD.set(sid,o);
+  const doc=new Y.Doc(), o={doc,text:doc.getText("text"),notes:doc.getText("notes"),marks:doc.getMap("marks"),board:doc.getArray("board")}; YD.set(sid,o);
   const s=R.sessions[sid];
   if(s&&s.y){ try{ Y.applyUpdate(doc,unb64(s.y),"load"); }catch(e){ console.warn(e); } }
   else if(s&&s.notes&&s.notes.text) doc.transact(()=>o.notes.insert(0,s.notes.text),"load");
@@ -763,7 +775,7 @@ const TA=()=>[[$("#x-edit"),"text"],[$("#n-text"),"notes"]];
 function capSel(o){ const out=[]; for(const [ta,k] of TA()){ if(document.activeElement===ta&&R.cur.v&&yOf(R.cur.v)===o) out.push([ta,Y.createRelativePositionFromTypeIndex(o[k],ta.selectionStart),Y.createRelativePositionFromTypeIndex(o[k],ta.selectionEnd)]); } return out; }
 let composing=false, pendingRender=false;
 function renderY(sel){
-  if(!R) return; const o=yOf(R.cur.v);
+  if(!R) return; const o=yOf(R.cur.v); if(TAB==="board") requestAnimationFrame(drawBoard);
   if(composing){ pendingRender=true; return; }
   for(const [ta,k] of TA()){ const v=o[k].toString(); if(ta.value!==v) ta.value=v; }
   (sel||[]).forEach(([ta,a,b])=>{ const A=Y.createAbsolutePositionFromRelativePosition(a,o.doc), B=Y.createAbsolutePositionFromRelativePosition(b,o.doc); if(A&&B) try{ ta.setSelectionRange(A.index,B.index); }catch(e){} });
@@ -878,6 +890,46 @@ function renderTrend(){
   $("#trend").innerHTML=`<div class="small muted" style="margin-bottom:6px">${esc(t("trendTitle"))}</div><div class="trend">${data.map(d=>`<div class="r"><span>${esc(t("sessionN",d.s.n))}</span><span class="tbar"><b class="${ME.learn}" style="width:${d.mine/max*100}%"></b><b class="free" style="width:${d.other/max*100}%"></b></span><span class="v">${mmss(d.mine+d.other)}</span></div>`).join("")}</div>`;
 }
 
+
+/* ---------- whiteboard: strokes are normalised (0–1) so every screen shows the same drawing ---------- */
+const BOARD_COL=["#1f2a2e","#b4492f","#2c6b64","#2f6fb3"];
+let BTOOL="pen", BCOL=0, BLIVE=null, BDOWN=null, BERASE=false;
+function strokeDraw(ctx,W,H,s){ const p=s.p; if(!p||p.length<2) return; ctx.strokeStyle=s.c; ctx.lineWidth=Math.max(1.5,s.w*W); ctx.beginPath(); ctx.moveTo(p[0]*W,p[1]*H); for(let i=2;i<p.length;i+=2) ctx.lineTo(p[i]*W,p[i+1]*H); ctx.stroke(); }
+function drawBoard(){
+  const cv=$("#bd"); if(!cv||!R||!R.cur||!R.sessions[R.cur.v]) return;
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight; if(!W) return;
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){ cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); }
+  const ctx=cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H); ctx.fillStyle="#fdfdfb"; ctx.fillRect(0,0,W,H);
+  ctx.lineCap="round"; ctx.lineJoin="round";
+  for(const s of yOf(R.cur.v).board.toArray()) strokeDraw(ctx,W,H,s);
+  if(BLIVE) strokeDraw(ctx,W,H,{c:BOARD_COL[BCOL],w:0.004,p:BLIVE});
+}
+function bpos(e){ const r=$("#bd").getBoundingClientRect(); return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]; }
+function boardTx(fn){ const o=yOf(R.cur.v); o.doc.transact(()=>fn(o.board),"local"); }
+function nearStroke(p,x,y,r){ for(let i=0;i<p.length;i+=2){ const dx=p[i]-x, dy=p[i+1]-y; if(dx*dx+dy*dy<r*r) return true; } return false; }
+function eraseAt(x,y){ const arr=yOf(R.cur.v).board; for(let i=arr.length-1;i>=0;i--){ if(nearStroke(arr.get(i).p,x,y,0.02)){ boardTx(a=>a.delete(i,1)); return; } } }
+const bd=$("#bd");
+bd.addEventListener("pointerdown",e=>{ if(!R) return; e.preventDefault(); bd.setPointerCapture(e.pointerId); const [x,y]=bpos(e);
+  if(BTOOL==="eraser"){ BERASE=true; eraseAt(x,y); drawBoard(); } else { BDOWN=[+x.toFixed(4),+y.toFixed(4)]; BLIVE=[...BDOWN]; drawBoard(); } });
+bd.addEventListener("pointermove",e=>{ if(!R) return; const [x,y]=bpos(e);
+  if(BERASE){ eraseAt(x,y); drawBoard(); }
+  else if(BLIVE){ BLIVE.push(+x.toFixed(4),+y.toFixed(4)); if(BLIVE.length%4===0||BLIVE.length<=4) drawBoard(); } });
+function endStroke(){
+  if(BERASE){ BERASE=false; return; }
+  if(!BLIVE) return; const p=BLIVE; BLIVE=null; BDOWN=null; if(p.length<2) return;
+  const sid=R.cur.v; boardTx(a=>a.push([{id:uid(),c:BOARD_COL[BCOL],w:0.004,p,by:ME.name,t:now()}]));
+  drawBoard();
+}
+bd.addEventListener("pointerup",endStroke); bd.addEventListener("pointercancel",endStroke);
+$("#b-tools").addEventListener("click",e=>{ const b=e.target.closest("[data-bt]"); if(!b) return; BTOOL=b.dataset.bt; renderBoardTools(); });
+$("#b-cols").innerHTML=BOARD_COL.map((c,i)=>`<button data-bc="${i}" style="background:${c}" aria-label="${c}"></button>`).join("");
+$("#b-cols").addEventListener("click",e=>{ const b=e.target.closest("[data-bc]"); if(!b) return; BCOL=+b.dataset.bc; BTOOL="pen"; renderBoardTools(); });
+$("#b-undo").addEventListener("click",()=>{ if(!R) return; const arr=yOf(R.cur.v).board; for(let i=arr.length-1;i>=0;i--){ if(arr.get(i).by===ME.name){ boardTx(a=>a.delete(i,1)); break; } } drawBoard(); });
+$("#b-clear").addEventListener("click",()=>{ if(!R) return; const arr=yOf(R.cur.v).board; if(arr.length) boardTx(a=>a.delete(0,a.length)); drawBoard(); });
+function renderBoardTools(){ $$("[data-bt]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.bt===BTOOL)); $$("[data-bc]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.bc===BCOL&&BTOOL==="pen")); }
+renderBoardTools();
+window.addEventListener("resize",()=>{ if(TAB==="board") drawBoard(); });
+
 /* ---------- sessions: new, history, export ---------- */
 $("#b-new").addEventListener("click",()=>{ if(!confirm(t("confirmNew"))) return; const n=Math.max(...Object.values(R.sessions).map(x=>x.n||0))+1; const s=blankSession(n); s.plan=Object.assign({},S().plan,{t:now()});
   change("session",s); change("cur",{v:s.id,t:now()}); });
@@ -900,7 +952,7 @@ function exportMd(){
 $("#b-export").addEventListener("click",e=>{ e.stopPropagation(); PrintKit.menu($("#b-export"),[{label:t("exportWord"),run:()=>exportPK("docx")},{label:t("exportPdf"),run:()=>exportPK("print")},{label:t("exportMd"),run:exportMd}]); });
 window.addEventListener("hashchange",()=>{ if(roomFromHash()!==ROOM) location.reload(); });
 window.addEventListener("pagehide",()=>{ try{ if(BUS) send("bye",{}); }catch(e){} });
-if(LOCAL) window.__ponte={get R(){return R;},get PC(){return PC;},get PEERS(){return PEERS;}};
+if(LOCAL) window.__ponte={get board(){return R?yOf(R.cur.v).board.toArray():null;},get R(){return R;},get PC(){return PC;},get PEERS(){return PEERS;}};
 boot();
 })();
 </script>
