@@ -17,6 +17,7 @@
 @font-face{font-family:"Source Serif 4";font-weight:600;font-display:swap;src:url(fonts/source-serif-4-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122,U+FEFF,U+FFFD}
 @font-face{font-family:"Source Serif 4";font-weight:600;font-display:swap;src:url(fonts/source-serif-4-latin-ext-600-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+1E00-1E9F,U+1EF2-1EFF,U+20A0-20AB,U+20AD-20C0,U+2C60-2C7F,U+A720-A7FF}
 :root{
+  --de:#7a5aa0;--de-soft:#ece4f5;--en:#2f7f9a;--en-soft:#dcedf3;
   --bg:#f6f3ee;--card:#fff;--sunk:#efebe4;--ink:#1f2a2e;--muted:#69736f;--line:#e2ddd4;
   --acc:#2c6b64;--acc-soft:#e3efec;--zh:#b4492f;--zh-soft:#f7e6df;--pt:#2c6b64;--pt-soft:#e3efec;--warn:#9a5b12;
   --f-ui:"Source Sans 3",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
@@ -88,10 +89,10 @@ label.f{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
 .tm h3{margin:0;font-size:17px}
 .tm .big{font-variant-numeric:tabular-nums;font-size:30px;font-weight:600;letter-spacing:.02em}
 .phase{display:inline-block;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px}
-.phase.zh{background:var(--zh-soft);color:var(--zh)}.phase.pt{background:var(--pt-soft);color:var(--pt)}
+.phase.zh{background:var(--zh-soft);color:var(--zh)}.phase.pt{background:var(--pt-soft);color:var(--pt)}.phase.de{background:var(--de-soft);color:var(--de)}.phase.en{background:var(--en-soft);color:var(--en)}
 .track{display:flex;height:8px;border-radius:999px;overflow:hidden;background:var(--sunk);margin:12px 0 6px}
 .track i{display:block;height:100%}
-.track i.zh{background:var(--zh)}.track i.pt{background:var(--pt)}
+.track i.zh{background:var(--zh)}.track i.pt{background:var(--pt)}.track i.de{background:var(--de)}.track i.en{background:var(--en)}
 .track i.left{opacity:.25}
 .legend{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
 .plan{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:13.5px}
@@ -109,10 +110,13 @@ label.f{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
 .ltag button{border:1px solid var(--line);background:none;border-radius:999px;padding:2px 10px;font-size:12.5px}
 .ltag button[aria-pressed="true"].zh{background:var(--zh-soft);border-color:var(--zh);color:var(--zh)}
 .ltag button[aria-pressed="true"].pt{background:var(--pt-soft);border-color:var(--pt);color:var(--pt)}
+.ltag button[aria-pressed="true"].de{background:var(--de-soft);border-color:var(--de);color:var(--de)}
+.ltag button[aria-pressed="true"].en{background:var(--en-soft);border-color:var(--en);color:var(--en)}
+.ltag button.de,.ltag button.en{border-color:var(--line)}
 ul.items{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:6px}
 ul.items li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
 ul.items .dot{width:8px;height:8px;border-radius:50%;margin-top:8px}
-ul.items .dot.zh{background:var(--zh)}ul.items .dot.pt{background:var(--pt)}
+ul.items .dot.zh{background:var(--zh)}ul.items .dot.pt{background:var(--pt)}ul.items .dot.de{background:var(--de)}ul.items .dot.en{background:var(--en)}
 ul.items .w{font-weight:600;font-size:16px}
 ul.items .m{color:var(--ink)}
 ul.items .by{font-size:12px;color:var(--muted)}
@@ -148,7 +152,7 @@ ul.items li.on{border-color:var(--acc)}
 .trow .nm i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--line);display:inline-block}
 .trow .nm i.sp{background:#3c9a5f;box-shadow:0 0 0 4px rgba(60,154,95,.18)}
 .tbar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--sunk)}
-.tbar b{display:block;height:100%}.tbar b.zh{background:var(--zh)}.tbar b.pt{background:var(--pt)}.tbar b.free{background:var(--muted);opacity:.45}
+.tbar b{display:block;height:100%}.tbar b.zh{background:var(--zh)}.tbar b.pt{background:var(--pt)}.tbar b.de{background:var(--de)}.tbar b.en{background:var(--en)}.tbar b.free{background:var(--muted);opacity:.45}
 .trow .v{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
 .share{font-size:13px;color:var(--muted)}.share b{color:var(--ink)}
 .trend{display:grid;gap:5px;margin:0 0 14px}
@@ -190,7 +194,7 @@ ul.items li.on{border-color:var(--acc)}
     <label class="f" for="c-me" data-i="yourName"></label>
     <input type="text" id="c-me" maxlength="40" autocomplete="nickname">
     <label class="f" data-i="iLearn"></label>
-    <div class="pick" data-pick="c"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button></div>
+    <div class="pick" data-pick="c"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button><button data-l="de" aria-pressed="false"><b>Deutsch</b><span data-i="learnDe"></span></button><button data-l="en" aria-pressed="false"><b>English</b><span data-i="learnEn"></span></button></div>
     <div style="margin-top:16px"><button class="btn primary" id="c-go"><span data-i="create"></span></button></div>
     <div class="err" id="c-err"></div>
   </section>
@@ -202,7 +206,7 @@ ul.items li.on{border-color:var(--acc)}
     <label class="f" for="j-name" data-i="yourName"></label>
     <input type="text" id="j-name" maxlength="40" autocomplete="nickname">
     <label class="f" data-i="iLearn"></label>
-    <div class="pick" data-pick="j"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button></div>
+    <div class="pick" data-pick="j"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button><button data-l="de" aria-pressed="false"><b>Deutsch</b><span data-i="learnDe"></span></button><button data-l="en" aria-pressed="false"><b>English</b><span data-i="learnEn"></span></button></div>
     <div style="margin-top:16px"><button class="btn primary" id="j-go"><span data-i="accept"></span></button></div>
     <div class="err" id="j-err"></div>
   </section>
@@ -246,7 +250,7 @@ ul.items li.on{border-color:var(--acc)}
             <button class="btn sm" id="t-reset"><span data-i="reset"></span></button>
             <span class="sp"></span>
             <span class="muted" data-i="first"></span>
-            <select id="p-first"><option value="zh">中文</option><option value="pt">Português</option></select>
+            <select id="p-l1"></select><select id="p-l2"></select><select id="p-l3"></select>
             <select id="p-min"><option value="15">2 × 15</option><option value="20">2 × 20</option><option value="25">2 × 25</option><option value="30">2 × 30</option><option value="45">2 × 45</option></select>
           </div>
           <div class="talk" id="talk"></div>
@@ -282,12 +286,12 @@ ul.items li.on{border-color:var(--acc)}
         </div>
         <div id="p-vocab" hidden>
           <div class="add"><input type="text" id="v-w" data-ph="phWord"><input type="text" id="v-m" data-ph="phMeaning"><button class="btn primary sm" id="v-add"><span data-i="add"></span></button></div>
-          <div class="ltag"><span class="muted" data-i="language"></span><button class="zh" data-vl="zh">中文</button><button class="pt" data-vl="pt">Português</button></div>
+          <div class="ltag"><span class="muted" data-i="language"></span><button class="zh" data-vl="zh">中文</button><button class="pt" data-vl="pt">Português</button><button class="de" data-vl="de">Deutsch</button><button class="en" data-vl="en">English</button></div>
           <ul class="items" id="l-vocab"></ul>
         </div>
         <div id="p-fix" hidden>
           <div class="add fx"><input type="text" id="f-bad" data-ph="phSaid"><input type="text" id="f-good" data-ph="phBetter"><div class="wide"><input type="text" id="f-note" data-ph="phWhy"><button class="btn primary sm" id="f-add"><span data-i="add"></span></button></div></div>
-          <div class="ltag"><span class="muted" data-i="language"></span><button class="zh" data-fl="zh">中文</button><button class="pt" data-fl="pt">Português</button></div>
+          <div class="ltag"><span class="muted" data-i="language"></span><button class="zh" data-fl="zh">中文</button><button class="pt" data-fl="pt">Português</button><button class="de" data-fl="de">Deutsch</button><button class="en" data-fl="en">English</button></div>
           <ul class="items" id="l-fix"></ul>
         </div>
         <div id="p-notes" hidden>
@@ -395,6 +399,7 @@ lesson:["课文","Texto","Text"], readMark:["阅读 · 标注","Ler · marcar","
  talkLine:["你说了 {0}（{1} {2}）","Você falou {0} ({1} {2})","You spoke {0} ({1} {2})"],
  board:["白板","Quadro","Board"], pen:["画笔","Caneta","Pen"], eraser:["橡皮","Borracha","Eraser"], undo:["撤销","Desfazer","Undo"], clearBoard:["清空","Limpar","Clear"],
  boardHint:["两个人都能画，画的内容实时同步，并保存在这次学习里。橡皮：点一下或拖过一笔就删掉它。","Os dois podem desenhar; o desenho sincroniza e fica salvo nesta sessão. Borracha: toque ou passe sobre um traço para apagá-lo.","Both of you can draw; it syncs live and is saved in this session. Eraser: tap or drag across a stroke to delete it."],
+ learnDe:["我在学德语","Aprendo alemão","I'm learning German"], learnEn:["我在学英语","Aprendo inglês","I'm learning English"],
  notesHint:["共同编辑：两个人可以同时写，几秒内同步。","Editado pelos dois ao mesmo tempo; sincroniza em segundos.","Shared: you can both write at the same time; it syncs within seconds."],
  phNotes:["Hoje eu…\n今天我……","Hoje eu…\n今天我……","Hoje eu…\n今天我……"],
  sumHint:["每人写几句：今天学到了什么，下次想练什么。","Cada um escreve: o que aprendeu hoje e o que quer praticar na próxima.","Each of you: what you learned today, what to practise next time."],
@@ -423,7 +428,7 @@ function applyUI(){
 }
 $("#uil").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; UIL=b.dataset.ui; try{ localStorage.setItem("ponte-ui",UIL); }catch(x){} applyUI(); });
 let toastT; function toast(s){ const el=$("#toast"); el.textContent=s; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,3200); }
-const LNAME={zh:"中文",pt:"Português"};
+const LNAME={zh:"中文",pt:"Português",de:"Deutsch",en:"English"}; const LANGS=["zh","pt","de","en"], LANGK=[...LANGS,"free"]; const LTAG={zh:"zh-CN",pt:"pt-BR",de:"de-DE",en:"en-GB"};
 
 /* ---------- crypto: password → room id + AES key (PBKDF2, AES-GCM) ---------- */
 const te=new TextEncoder(), td=new TextDecoder();
@@ -471,7 +476,7 @@ function send(type,body){ if(!BUS) return Promise.resolve(); const bus=BUS, msg=
 /* ---------- state ---------- */
 let ROOM=null, K=null, R=null, REV=0, ME=null; // R = decrypted room document
 const PEERS=new Map(); // id → {name,learn,call,seen}
-function blankSession(n){ return {id:uid(),n,created:now(),t:now(),plan:{first:"zh",min:30,t:0},timer:{run:false,at:0,acc:0,t:0},vocab:{},fix:{},notes:{text:"",t:0,by:""},sum:{}}; }
+function blankSession(n){ return {id:uid(),n,created:now(),t:now(),plan:{langs:["zh","pt"],min:30,t:0},timer:{run:false,at:0,acc:0,t:0},vocab:{},fix:{},notes:{text:"",t:0,by:""},sum:{}}; }
 function blankRoom(name){ const s=blankSession(1); return {v:1,name:{v:name,t:now()},turn:{url:"",user:"",pass:"",t:0},cur:{v:s.id,t:now()},sessions:{[s.id]:s}}; }
 const lww=(a,b)=>!a?b:!b?a:((b.t||0)>(a.t||0)?b:a);
 function mergeItems(a,b){ const o=Object.assign({},a||{}); for(const k in (b||{})) o[k]=lww(o[k],b[k]); return o; }
@@ -612,8 +617,8 @@ async function handleMsg(m){
   if(b.type==="sig") return onSignal(from,b);
 }
 function renderPeople(){
-  const el=$("#people"); const arr=[`<span class="on">${esc(ME.name)} · ${LNAME[ME.learn==="zh"?"zh":"pt"]}</span>`];
-  const seen=new Set([ME.name]); for(const [,p] of PEERS){ if(seen.has(p.name)) continue; seen.add(p.name); arr.push(`<span class="on">${esc(p.name)} · ${LNAME[p.learn==="zh"?"zh":"pt"]}</span>`); }
+  const el=$("#people"); const arr=[`<span class="on">${esc(ME.name)} · ${LNAME[ME.learn]||""}</span>`];
+  const seen=new Set([ME.name]); for(const [,p] of PEERS){ if(seen.has(p.name)) continue; seen.add(p.name); arr.push(`<span class="on">${esc(p.name)} · ${LNAME[p.learn]||""}</span>`); }
   el.innerHTML=arr.join("");
 }
 
@@ -692,35 +697,38 @@ function callUI(){
 
 /* ---------- timer: two halves, one per language ---------- */
 let lastPhase=null;
-function phases(){ const p=S().plan, a=p.first, b=a==="zh"?"pt":"zh"; return [{l:a,m:p.min},{l:b,m:p.min}]; }
+function phases(){ const p=S().plan, ls=(p.langs&&p.langs.length>=2)?p.langs:["zh","pt"]; return ls.map(l=>({l,m:p.min})); }
+
 function elapsed(){ const tm=S().timer; return tm.run?(tm.acc+(now()-tm.at)):tm.acc; }
 function tick(){
-  if(!R) return; const ph=phases(), tot=(ph[0].m+ph[1].m)*60000, el=Math.min(elapsed(),tot), half=ph[0].m*60000;
-  const idx=el<half?0:1, endOf=idx===0?half:tot, rest=Math.max(0,endOf-el), over=el>=tot;
+  if(!R) return; const ph=phases(), mins=ph.map(x=>x.m*60000), tot=mins.reduce((a,b)=>a+b,0), el=Math.min(elapsed(),tot);
+  let idx=0, start=0; while(idx<ph.length-1&&el>=start+mins[idx]){ start+=mins[idx]; idx++; }
+  const endOf=start+mins[idx], rest=Math.max(0,endOf-el), over=el>=tot;
   const mm=Math.floor(rest/60000), ss=Math.floor(rest%60000/1000);
   $("#t-big").textContent=over?"00:00":String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");
   const cur=ph[idx].l; const pe=$("#t-phase"); pe.className="phase "+(over?"":cur); pe.textContent=over?t("done"):t("now")+" "+LNAME[cur];
-  const w0=Math.min(el,half)/tot*100, w1=Math.max(0,el-half)/tot*100;
-  $("#t-track").innerHTML=`<i class="${ph[0].l}" style="width:${w0}%"></i><i class="${ph[0].l} left" style="width:${50-w0}%"></i><i class="${ph[1].l}" style="width:${w1}%"></i><i class="${ph[1].l} left" style="width:${50-w1}%"></i>`;
-  $("#t-leg").innerHTML=`<span>${LNAME[ph[0].l]} · ${ph[0].m} min</span><span>${LNAME[ph[1].l]} · ${ph[1].m} min</span>`;
+  $("#t-track").innerHTML=ph.map((x,i)=>{ const s0=mins.slice(0,i).reduce((a,b)=>a+b,0), done=Math.max(0,Math.min(el-s0,mins[i])), w=mins[i]/tot*100, dw=done/tot*100; return `<i class="${x.l}" style="width:${dw}%"></i><i class="${x.l} left" style="width:${w-dw}%"></i>`; }).join("");
+  $("#t-leg").innerHTML=ph.map(x=>`<span>${LNAME[x.l]} · ${x.m} min</span>`).join("");
   const tm=S().timer; $("#t-start").textContent=tm.run?t("pause"):(tm.acc>0&&!over?t("resume"):t("start"));
   const key=S().id+":"+(over?"end":idx);
   if(tm.run&&lastPhase&&lastPhase!==key&&lastPhase.startsWith(S().id)){ chime(over?3:2); toast(over?t("done"):t("switchTo",LNAME[cur])); }
   lastPhase=key; renderTalk();
   if(over&&tm.run) change("timer",{sid:S().id,item:{run:false,at:0,acc:tot,t:now()}});
 }
+
 function chime(n){ try{ const ac=new (window.AudioContext||window.webkitAudioContext)(); for(let i=0;i<n;i++){ const o=ac.createOscillator(), g=ac.createGain(); o.frequency.value=i%2?660:880; o.connect(g); g.connect(ac.destination); const s=ac.currentTime+i*0.35; g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(0.25,s+0.02); g.gain.exponentialRampToValueAtTime(0.0001,s+0.3); o.start(s); o.stop(s+0.32); } }catch(e){} }
-$("#t-start").addEventListener("click",()=>{ const tm=S().timer, ph=phases(), tot=(ph[0].m+ph[1].m)*60000;
+$("#t-start").addEventListener("click",()=>{ const tm=S().timer, tot=phases().reduce((a,x)=>a+x.m*60000,0);
   let item; if(tm.run) item={run:false,at:0,acc:elapsed(),t:now()}; else item={run:true,at:now(),acc:tm.acc>=tot?0:tm.acc,t:now()};
   change("timer",{sid:S().id,item}); });
 $("#t-reset").addEventListener("click",()=>change("timer",{sid:S().id,item:{run:false,at:0,acc:0,t:now()}}));
-$("#p-first").addEventListener("change",e=>change("plan",{sid:S().id,item:Object.assign({},S().plan,{first:e.target.value,t:now()})}));
+["#p-l1","#p-l2","#p-l3"].forEach((id,i)=>{ $(id).innerHTML=(i===2?'<option value="">—</option>':"")+[["zh","中文"],["pt","Português"],["de","Deutsch"],["en","English"]].map(([v,l])=>`<option value="${v}">${l}</option>`).join(""); });
+["#p-l1","#p-l2","#p-l3"].forEach(id=>$(id).addEventListener("change",()=>{ const L=[...new Set(["#p-l1","#p-l2","#p-l3"].map(x=>$(x).value).filter(Boolean))]; if(L.length<2){ renderAll(); return; } change("plan",{sid:S().id,item:Object.assign({},S().plan,{langs:L,t:now()})}); }));
 $("#p-min").addEventListener("change",e=>change("plan",{sid:S().id,item:Object.assign({},S().plan,{min:+e.target.value,t:now()})}));
 
 /* ---------- words, corrections, notes, summaries ---------- */
 let TAB="text", VL=null, FL=null;
-const guessL=txt=>/[\u3400-\u9fff]/.test(txt)?"zh":/[a-zA-ZÀ-ÿ]/.test(txt)?"pt":null;
-const curLang=()=>{ const ph=phases(), el=elapsed(); return el<ph[0].m*60000?ph[0].l:ph[1].l; };
+const guessL=txt=>/[\u3400-\u9fff]/.test(txt)?"zh":null;
+const curLang=()=>{ const ph=phases(), el=elapsed(); let s=0; for(const x of ph){ s+=x.m*60000; if(el<s) return x.l; } return ph[ph.length-1].l; };
 $$(".tabs button").forEach(b=>b.addEventListener("click",()=>{ TAB=b.dataset.tab; renderAll(); }));
 $$("[data-vl]").forEach(b=>b.addEventListener("click",()=>{ VL=b.dataset.vl; renderAll(); }));
 $$("[data-fl]").forEach(b=>b.addEventListener("click",()=>{ FL=b.dataset.fl; renderAll(); }));
@@ -751,7 +759,7 @@ function renderAll(remote){
   const g=$("#sumgrid"); const focused=document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.sum;
   if(!focused) g.innerHTML=[...names].filter(Boolean).map(n=>{ const it=s.sum[n]; return n===ME.name?`<div><h4>${esc(n)}</h4><textarea data-sum="${esc(n)}" rows="4">${esc(it?it.text:"")}</textarea></div>`:`<div><h4>${esc(n)}</h4><div class="ro">${esc(it?it.text:"")}</div></div>`; }).join("");
   else [...g.querySelectorAll(".ro")].forEach(el=>{ const n=el.previousElementSibling.textContent, it=s.sum[n]; el.textContent=it?it.text:""; });
-  $("#p-first").value=s.plan.first; $("#p-min").value=String(s.plan.min);
+  const PL=s.plan.langs||["zh","pt"]; ["#p-l1","#p-l2","#p-l3"].forEach((id,i)=>{ $(id).value=PL[i]||""; }); $("#p-min").value=String(s.plan.min);
   renderPeople(); tick();
 }
 
@@ -804,13 +812,13 @@ function markRanges(o){ const out=[]; o.marks.forEach((m,id)=>{ if(!m||m.del) re
   if(A&&B&&B.index>A.index) out.push({id,a:A.index,b:B.index,m}); }catch(e){} }); return out.sort((x,y)=>x.a-y.a); }
 function renderLesson(o){
   const el=$("#x-read"), txt=o.text.toString(), ms=markRanges(o); el.dataset.empty=t("lessonEmpty");
-  el.setAttribute("lang",guessL(txt)==="zh"?"zh-CN":"pt-BR");
+  el.setAttribute("lang",LTAG[curLang()]||"pt-BR");
   if(!txt){ el.innerHTML=""; } else {
     const cuts=new Set([0,txt.length]); ms.forEach(r=>{ cuts.add(r.a); cuts.add(r.b); }); const pts=[...cuts].sort((a,b)=>a-b); let h="";
     for(let i=0;i<pts.length-1;i++){ const a=pts[i], b=pts[i+1], on=ms.filter(r=>r.a<=a&&r.b>=b), seg=esc(txt.slice(a,b));
       if(!on.length){ h+=seg; continue; } const top=on[on.length-1]; h+=`<mark class="${top.m.c||""}${top.m.note?" c":""}${MSEL===top.id?" on":""}" data-mk="${top.id}" title="${esc(top.m.note||"")}">${seg}</mark>`; }
     el.innerHTML=h; }
-  $("#l-marks").innerHTML=ms.length?ms.map(r=>`<li class="${MSEL===r.id?"on":""}" data-mli="${r.id}"><span class="dot ${guessL(txt.slice(r.a,r.b))||"pt"}"></span><div><div class="w">${esc(txt.slice(r.a,r.b))}</div>${r.m.note?`<div class="m">${esc(r.m.note)}</div>`:""}<div class="by">${esc(t("by",r.m.by||""))}</div></div><button class="x" data-mdel="${r.id}" aria-label="delete">×</button></li>`).join(""):(txt?`<li class="empty" style="border:0;background:none;display:block">${esc(t("noMarks"))}</li>`:"");
+  $("#l-marks").innerHTML=ms.length?ms.map(r=>`<li class="${MSEL===r.id?"on":""}" data-mli="${r.id}"><span class="dot ${guessL(txt.slice(r.a,r.b))||curLang()}"></span><div><div class="w">${esc(txt.slice(r.a,r.b))}</div>${r.m.note?`<div class="m">${esc(r.m.note)}</div>`:""}<div class="by">${esc(t("by",r.m.by||""))}</div></div><button class="x" data-mdel="${r.id}" aria-label="delete">×</button></li>`).join(""):(txt?`<li class="empty" style="border:0;background:none;display:block">${esc(t("noMarks"))}</li>`:"");
 }
 function selOffsets(){ const sel=window.getSelection(), root=$("#x-read"); if(!sel||sel.rangeCount===0||sel.isCollapsed) return null; const r=sel.getRangeAt(0);
   if(!root.contains(r.startContainer)||!root.contains(r.endContainer)) return null;
@@ -837,7 +845,7 @@ function exportPK(kind){
   const F=sorted(s.fix).reverse(); if(F.length) blocks.push({label:t("fixes"),paras:F.map(x=>[(x.bad?x.bad+" → ":"")+x.good+(x.note?"  ("+x.note+")":"")])});
   const nt=o.notes.toString(); if(nt.trim()) blocks.push({label:t("notes"),paras:P(nt)});
   const sums=Object.values(s.sum).filter(x=>x.text&&x.text.trim()); if(sums.length) blocks.push({label:t("summary"),paras:sums.flatMap(x=>[[x.name+":"],...P(x.text)])});
-  const TT=Object.values(talkOf(s)); if(TT.length) blocks.push({label:t("talkTitle"),paras:TT.map(x=>[x.name+": "+mmss(x.zh+x.pt+x.free)+"  (中文 "+mmss(x.zh)+" · Português "+mmss(x.pt)+(x.free?" · "+t("other")+" "+mmss(x.free):"")+")"])});
+  const TT=Object.values(talkOf(s)); if(TT.length) blocks.push({label:t("talkTitle"),paras:TT.map(x=>[x.name+": "+mmss(LANGK.reduce((a,k)=>a+(x[k]||0),0))+"  ("+LANGK.filter(k=>x[k]).map(k=>(LNAME[k]||t("other"))+" "+mmss(x[k])).join(" · ")+")"])});
   const doc={title:name+" · "+t("sessionN",s.n),meta:d,lang:"zh-CN",paras:P(txt),
     gloss:{label:t("vocab"),rows:sorted(s.vocab).reverse().map(x=>({w:x.w,m:[x.m||""]}))},blocks};
   const opt={title:`${name} ${d}`,filename:`Ponte ${d} ${t("sessionN",s.n)}`,ea:"zh",brand:{name:"桥 · Ponte",url:location.host+location.pathname,accent:"#2c6b64",docFont:"Georgia"}};
@@ -846,8 +854,9 @@ function exportPK(kind){
 
 
 /* ---------- speaking time: each device listens only to its own microphone ---------- */
-let VAD=null, SPK=false; const PEERSPK=new Map(); const LIVE={sid:null,zh:0,pt:0,free:0}; let talkSaveT=0;
-function talkBase(sid){ const it=(R.sessions[sid].talk||{})[ME.name]; return it?{zh:it.zh||0,pt:it.pt||0,free:it.free||0}:{zh:0,pt:0,free:0}; }
+let VAD=null, SPK=false; const PEERSPK=new Map(); const LIVE={sid:null,zh:0,pt:0,de:0,en:0,free:0}; let talkSaveT=0;
+function talkBase(sid){ const it=(R.sessions[sid].talk||{})[ME.name]; const o={}; LANGK.forEach(k=>o[k]=it?(it[k]||0):0); return o; }
+
 function talkBucket(){ const tm=S().timer; return (tm.run||tm.acc>0)?curLang():"free"; }
 function startVAD(stream){
   stopVAD(); const tr=stream.getAudioTracks()[0]; if(!tr) return;
@@ -865,26 +874,28 @@ function startVAD(stream){
 function stopVAD(){ if(!VAD) return; clearInterval(VAD.iv); try{ VAD.ac.close(); }catch(e){} VAD=null; setSpk(false); commitTalk(); }
 function addTalk(dt){ const sid=R.cur.v; if(LIVE.sid!==sid){ commitTalk(); Object.assign(LIVE,{sid},talkBase(sid)); } LIVE[talkBucket()]+=dt; if(now()-talkSaveT>5000) commitTalk(); }
 function commitTalk(){ if(!LIVE.sid||!R||!R.sessions[LIVE.sid]) return; talkSaveT=now();
-  const b=talkBase(LIVE.sid); if(b.zh===LIVE.zh&&b.pt===LIVE.pt&&b.free===LIVE.free) return;
-  change("talk",{sid:LIVE.sid,key:ME.name,item:{name:ME.name,learn:ME.learn,zh:Math.round(LIVE.zh),pt:Math.round(LIVE.pt),free:Math.round(LIVE.free),t:now()}}); }
+  const b=talkBase(LIVE.sid); if(LANGK.every(k=>b[k]===LIVE[k])) return;
+  change("talk",{sid:LIVE.sid,key:ME.name,item:Object.assign({name:ME.name,learn:ME.learn,t:now()},Object.fromEntries(LANGK.map(k=>[k,Math.round(LIVE[k])])))}); }
 function setSpk(v){ if(v===SPK) return; SPK=v; send("spk",{v}); }
 const mmss=ms=>{ const s=Math.round(ms/1000), m=Math.floor(s/60); return m>=60?Math.floor(m/60)+":"+String(m%60).padStart(2,"0")+":"+String(s%60).padStart(2,"0"):m+":"+String(s%60).padStart(2,"0"); };
-function talkOf(s){ const out={}; Object.values(s.talk||{}).forEach(x=>{ out[x.name]={name:x.name,learn:x.learn,zh:x.zh||0,pt:x.pt||0,free:x.free||0}; });
-  if(LIVE.sid===s.id) out[ME.name]={name:ME.name,learn:ME.learn,zh:LIVE.zh,pt:LIVE.pt,free:LIVE.free}; return out; }
+function talkOf(s){ const out={}; Object.values(s.talk||{}).forEach(x=>{ out[x.name]=Object.assign({name:x.name,learn:x.learn},Object.fromEntries(LANGK.map(k=>[k,x[k]||0]))); });
+  if(LIVE.sid===s.id) out[ME.name]=Object.assign({name:ME.name,learn:ME.learn},Object.fromEntries(LANGK.map(k=>[k,LIVE[k]]))); return out; }
+
 function renderTalk(){
   const s=S(), T0=talkOf(s), names=[...new Set([ME.name,...[...PEERS.values()].map(p=>p.name),...Object.keys(T0)])];
-  const rows=names.map(n=>{ const x=T0[n]||{zh:0,pt:0,free:0}; return {n,x,tot:x.zh+x.pt+x.free}; });
+  const rows=names.map(n=>{ const x=T0[n]||Object.fromEntries(LANGK.map(k=>[k,0])); return {n,x,tot:LANGK.reduce((a,k)=>a+(x[k]||0),0)}; });
   const max=Math.max(60000,...rows.map(r=>r.tot)); const spk=n=>n===ME.name?SPK:[...PEERS.entries()].some(([id,p])=>p.name===n&&PEERSPK.get(id));
-  let h=`<h4><span>${esc(t("talkTitle"))}</span></h4>`+rows.map(r=>`<div class="trow"><span class="nm"><i class="${spk(r.n)?"sp":""}"></i>${esc(r.n)}</span><span class="tbar">${["zh","pt","free"].map(k=>r.x[k]?`<b class="${k}" style="width:${r.x[k]/max*100}%"></b>`:"").join("")}</span><span class="v">${mmss(r.tot)}</span></div>`).join("");
-  // in each language's part: who spoke how much
-  const sh=["zh","pt"].map(l=>{ const tot=rows.reduce((a,r)=>a+r.x[l],0); if(tot<20000) return ""; const learner=rows.find(r=>((T0[r.n]||{}).learn||(r.n===ME.name?ME.learn:([...PEERS.values()].find(p=>p.name===r.n)||{}).learn))===l)||rows[0];
-    return `<div class="share">${esc(t("shareIn",LNAME[l],learner.n,""))}<b>${Math.round(learner.x[l]/tot*100)}%</b> · ${mmss(learner.x[l])}</div>`; }).join("");
+  let h=`<h4><span>${esc(t("talkTitle"))}</span></h4>`+rows.map(r=>`<div class="trow"><span class="nm"><i class="${spk(r.n)?"sp":""}"></i>${esc(r.n)}</span><span class="tbar">${LANGK.map(k=>r.x[k]?`<b class="${k}" style="width:${r.x[k]/max*100}%"></b>`:"").join("")}</span><span class="v">${mmss(r.tot)}</span></div>`).join("");
+  const learnerOf=l=>{ const r=rows.find(r=>(T0[r.n]||{}).learn===l||(r.n===ME.name&&ME.learn===l)); return r||null; };
+  const sh=LANGS.map(l=>{ const tot=rows.reduce((a,r)=>a+(r.x[l]||0),0); if(tot<20000) return ""; const lr=learnerOf(l)||rows[0];
+    return `<div class="share">${esc(t("shareIn",LNAME[l],lr.n,""))}<b>${Math.round((lr.x[l]||0)/tot*100)}%</b> · ${mmss(lr.x[l]||0)}</div>`; }).join("");
   h+=sh||`<div class="share">${esc(t("talkHint"))}</div>`;
   $("#talk").innerHTML=h;
 }
+
 function renderTrend(){
   const arr=Object.values(R.sessions).sort((a,b)=>a.created-b.created).slice(-12);
-  const data=arr.map(s=>{ const x=(s.talk||{})[ME.name]||{zh:0,pt:0,free:0}; return {s,mine:x[ME.learn]||0,other:(x.zh||0)+(x.pt||0)+(x.free||0)-(x[ME.learn]||0)}; });
+  const data=arr.map(s=>{ const x=(s.talk||{})[ME.name]||{}; const all=LANGK.reduce((a,k)=>a+(x[k]||0),0); return {s,mine:x[ME.learn]||0,other:all-(x[ME.learn]||0)}; });
   if(!data.some(d=>d.mine+d.other>0)){ $("#trend").innerHTML=""; return; }
   const max=Math.max(...data.map(d=>d.mine+d.other),60000);
   $("#trend").innerHTML=`<div class="small muted" style="margin-bottom:6px">${esc(t("trendTitle"))}</div><div class="trend">${data.map(d=>`<div class="r"><span>${esc(t("sessionN",d.s.n))}</span><span class="tbar"><b class="${ME.learn}" style="width:${d.mine/max*100}%"></b><b class="free" style="width:${d.other/max*100}%"></b></span><span class="v">${mmss(d.mine+d.other)}</span></div>`).join("")}</div>`;
@@ -945,14 +956,14 @@ function exportMd(){
   const s=S(), d=new Date(s.created).toISOString().slice(0,10), L=x=>x.l==="zh"?"中文":"PT";
   let md=`# ${R.name.v||"Ponte"} — ${t("sessionN",s.n)} · ${d}\n\n## ${t("vocab")}\n`+sorted(s.vocab).reverse().map(x=>`- [${L(x)}] **${x.w}**${x.m?" — "+x.m:""}`).join("\n");
   md+=`\n\n## ${t("fixes")}\n`+sorted(s.fix).reverse().map(x=>`- [${L(x)}] ${x.bad?"~~"+x.bad+"~~ → ":""}**${x.good}**${x.note?" ("+x.note+")":""}`).join("\n");
-  md+=`\n\n## ${t("talkTitle")}\n`+Object.values(talkOf(s)).map(x=>`- ${x.name}: ${mmss(x.zh+x.pt+x.free)} (中文 ${mmss(x.zh)} · Português ${mmss(x.pt)})`).join("\n");
+  md+=`\n\n## ${t("talkTitle")}\n`+Object.values(talkOf(s)).map(x=>`- ${x.name}: ${mmss(LANGK.reduce((a,k)=>a+(x[k]||0),0))} (${LANGK.filter(k=>x[k]).map(k=>(LNAME[k]||t("other"))+" "+mmss(x[k])).join(" · ")})`).join("\n");
   md+=`\n\n## ${t("notes")}\n${yOf(s.id).notes.toString()}\n\n## ${t("summary")}\n`+Object.values(s.sum).map(x=>`### ${x.name}\n${x.text}`).join("\n\n")+"\n";
   const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([md],{type:"text/markdown"})); a.download=`ponte-${d}-${s.n}.md`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
 }
 $("#b-export").addEventListener("click",e=>{ e.stopPropagation(); PrintKit.menu($("#b-export"),[{label:t("exportWord"),run:()=>exportPK("docx")},{label:t("exportPdf"),run:()=>exportPK("print")},{label:t("exportMd"),run:exportMd}]); });
 window.addEventListener("hashchange",()=>{ if(roomFromHash()!==ROOM) location.reload(); });
 window.addEventListener("pagehide",()=>{ try{ if(BUS) send("bye",{}); }catch(e){} });
-if(LOCAL) window.__ponte={get board(){return R?yOf(R.cur.v).board.toArray():null;},get R(){return R;},get PC(){return PC;},get PEERS(){return PEERS;}};
+if(LOCAL) window.__ponte={setAcc:ms=>change("timer",{sid:S().id,item:{run:false,at:0,acc:ms,t:now()}}),get board(){return R?yOf(R.cur.v).board.toArray():null;},get R(){return R;},get PC(){return PC;},get PEERS(){return PEERS;}};
 boot();
 })();
 </script>
