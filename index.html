@@ -124,6 +124,22 @@ ul.items .x{border:0;background:none;color:var(--muted);font-size:18px;line-heig
 .sumgrid h4{margin:0 0 4px;font-size:14px}
 .ro{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-height:60px}
 .saved{font-size:12px;color:var(--muted)}
+/* lesson text */
+.xtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.lesson{white-space:pre-wrap;font-size:17.5px;line-height:1.85;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-height:160px;max-height:62vh;overflow:auto;-webkit-user-select:text;user-select:text}
+.lesson:empty::before{content:attr(data-empty);color:var(--muted);font-size:15px}
+.lesson mark{background:#fbe8a6;color:inherit;border-radius:3px;padding:0 1px;cursor:pointer}
+.lesson mark.g{background:#cfe9dc}.lesson mark.c{border-bottom:2px solid var(--zh)}
+.lesson mark.on{outline:2px solid var(--acc)}
+@media (prefers-color-scheme:dark){.lesson mark{background:#5a4a14}.lesson mark.g{background:#1f4a39}}
+#x-edit{font-size:16.5px;line-height:1.75;min-height:260px}
+.selbar{position:sticky;bottom:8px;margin-top:10px;background:var(--card);border:1px solid var(--acc);border-radius:14px;padding:10px;display:grid;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:5}
+.selbar .q{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.selbar .r{display:flex;gap:6px;flex-wrap:wrap}
+.typing{font-size:12.5px;color:var(--acc)}
+body.wide .grid{grid-template-columns:minmax(0,.78fr) minmax(0,1.5fr)}
+@media (max-width:900px){body.wide .grid{grid-template-columns:minmax(0,1fr)}}
+ul.items li.on{border-color:var(--acc)}
 /* modal */
 .scrim{position:fixed;inset:0;background:rgba(10,15,17,.45);display:grid;place-items:center;padding:16px;z-index:50}
 .modal{background:var(--card);border-radius:var(--r);max-width:560px;width:100%;max-height:85vh;overflow:auto;padding:18px}
@@ -221,12 +237,25 @@ ul.items .x{border:0;background:none;color:var(--muted);font-size:18px;line-heig
       <div class="card">
         <div class="sessbar"><span class="t" id="s-title"></span><span class="muted small" id="s-date"></span><span class="sp"></span><button class="btn sm" id="b-new"><span data-i="newSession"></span></button><button class="btn sm" id="b-export"><span data-i="export"></span></button></div>
         <div class="tabs" role="tablist">
-          <button role="tab" data-tab="vocab" aria-selected="true"><span data-i="vocab"></span><span class="n" id="n-vocab">0</span></button>
+          <button role="tab" data-tab="text" aria-selected="true"><span data-i="lesson"></span></button>
+          <button role="tab" data-tab="vocab"><span data-i="vocab"></span><span class="n" id="n-vocab">0</span></button>
           <button role="tab" data-tab="fix"><span data-i="fixes"></span><span class="n" id="n-fix">0</span></button>
           <button role="tab" data-tab="notes"><span data-i="notes"></span></button>
           <button role="tab" data-tab="sum"><span data-i="summary"></span></button>
         </div>
-        <div id="p-vocab">
+        <div id="p-text">
+          <div class="xtools"><div class="seg" id="x-mode"><button data-m="read"><span data-i="readMark"></span></button><button data-m="edit"><span data-i="edit"></span></button></div><span class="typing" id="x-typing"></span><span class="sp"></span><button class="btn sm" id="b-wide"><span data-i="wide"></span></button></div>
+          <div class="small muted" id="x-hint" style="margin-bottom:6px"></div>
+          <div class="lesson" id="x-read" data-noi18n></div>
+          <textarea id="x-edit" rows="14" data-ph="phLesson" hidden></textarea>
+          <div class="selbar" id="selbar" hidden>
+            <div class="q" id="sel-q"></div>
+            <input type="text" id="sel-note" data-ph="phComment">
+            <div class="r"><button class="btn sm primary" id="sel-mark"><span data-i="mark"></span></button><button class="btn sm" id="sel-vocab"><span data-i="toVocab"></span></button><button class="btn sm ghost" id="sel-x"><span data-i="cancel"></span></button></div>
+          </div>
+          <ul class="items" id="l-marks"></ul>
+        </div>
+        <div id="p-vocab" hidden>
           <div class="add"><input type="text" id="v-w" data-ph="phWord"><input type="text" id="v-m" data-ph="phMeaning"><button class="btn primary sm" id="v-add"><span data-i="add"></span></button></div>
           <div class="ltag"><span class="muted" data-i="language"></span><button class="zh" data-vl="zh">中文</button><button class="pt" data-vl="pt">Português</button></div>
           <ul class="items" id="l-vocab"></ul>
@@ -238,7 +267,7 @@ ul.items .x{border:0;background:none;color:var(--muted);font-size:18px;line-heig
         </div>
         <div id="p-notes" hidden>
           <div class="small muted" style="margin-bottom:6px" data-i="notesHint"></div>
-          <textarea id="n-text" rows="12" data-ph="phNotes"></textarea>
+          <textarea id="n-text" rows="12" data-ph="phNotes"></textarea><span class="typing" id="n-typing"></span>
           <div class="saved" id="n-saved"></div>
         </div>
         <div id="p-sum" hidden>
@@ -264,6 +293,8 @@ ul.items .x{border:0;background:none;color:var(--muted);font-size:18px;line-heig
 <div class="toast" id="toast" hidden></div>
 
 <script src="vendor/supabase.js"></script>
+<script src="vendor/yjs.min.js"></script>
+<script src="vendor/printkit.js"></script>
 <script>
 (function(){
 "use strict";
@@ -308,7 +339,15 @@ const T={
  add:["添加","Adicionar","Add"], language:["语言","Idioma","Language"],
  phWord:["词或短语","Palavra ou expressão","Word or phrase"], phMeaning:["意思 / 例句","Significado / exemplo","Meaning / example"],
  phSaid:["说成了…","Eu disse…","I said…"], phBetter:["更好的说法","Melhor dizer…","Better…"], phWhy:["说明（可不填）","Por quê (opcional)","Why (optional)"],
- notesHint:["共同编辑：两个人都能写，几秒后同步。","Editado pelos dois; sincroniza em segundos.","Shared: you both can write; it syncs within seconds."],
+lesson:["课文","Texto","Text"], readMark:["阅读 · 标注","Ler · marcar","Read · mark"], edit:["编辑","Editar","Edit"], wide:["放大课文","Ampliar texto","Bigger text"], narrow:["还原","Voltar","Normal"],
+ phLesson:["把课文贴在这里，两个人可以同时修改。","Cole o texto aqui; os dois podem editar ao mesmo tempo.","Paste the text here — you can both edit at the same time."],
+ lessonEmpty:["还没有课文。点「编辑」，把课文贴进来。","Ainda não há texto. Toque em «Editar» e cole o texto.","No text yet. Tap “Edit” and paste it in."],
+ readHint:["选中一段文字，可以标记、写批注，或者加到词汇。两个人看到的是同一份。","Selecione um trecho para marcar, comentar ou mandar ao vocabulário. Os dois veem a mesma versão.","Select a passage to mark it, comment, or add it to the words. You both see the same copy."],
+ editHint:["两个人可以同时打字，几秒内同步。","Os dois podem digitar ao mesmo tempo; sincroniza em segundos.","You can both type at once; it syncs within seconds."],
+ phComment:["批注（可不填）","Comentário (opcional)","Comment (optional)"], mark:["标记","Marcar","Mark"], toVocab:["加到词汇","Ao vocabulário","Add to words"], cancel:["取消","Cancelar","Cancel"],
+ noMarks:["还没有标注。","Nenhuma marcação ainda.","No marks yet."], typingX:["{0} 正在编辑…","{0} está editando…","{0} is editing…"], marks:["标注","Marcações","Marks"],
+ exportWord:["Word 文件 (.docx)","Arquivo Word (.docx)","Word file (.docx)"], exportPdf:["打印 / 存为 PDF","Imprimir / salvar PDF","Print / save as PDF"], exportMd:["Markdown 文本","Texto Markdown","Markdown text"],
+ notesHint:["共同编辑：两个人可以同时写，几秒内同步。","Editado pelos dois ao mesmo tempo; sincroniza em segundos.","Shared: you can both write at the same time; it syncs within seconds."],
  phNotes:["Hoje eu…\n今天我……","Hoje eu…\n今天我……","Hoje eu…\n今天我……"],
  sumHint:["每人写几句：今天学到了什么，下次想练什么。","Cada um escreve: o que aprendeu hoje e o que quer praticar na próxima.","Each of you: what you learned today, what to practise next time."],
  noWords:["还没有词。聊天时遇到新词就加在这里。","Ainda nenhuma palavra. Adicione as novas durante a conversa.","No words yet — add new ones as you talk."],
@@ -332,7 +371,7 @@ function applyUI(){
   $$("[data-ph]").forEach(el=>el.placeholder=t(el.dataset.ph));
   $$("#uil button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ui===UIL));
   $("#foot").textContent=t("foot");
-  if(R) { renderAll(); callUI(); }
+  if(R) { renderAll(); callUI(); renderLessonMode(); $("#b-wide").firstElementChild.textContent=t(document.body.classList.contains("wide")?"narrow":"wide"); }
 }
 $("#uil").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; UIL=b.dataset.ui; try{ localStorage.setItem("ponte-ui",UIL); }catch(x){} applyUI(); });
 let toastT; function toast(s){ const el=$("#toast"); el.textContent=s; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,3200); }
@@ -385,10 +424,12 @@ const lww=(a,b)=>!a?b:!b?a:((b.t||0)>(a.t||0)?b:a);
 function mergeItems(a,b){ const o=Object.assign({},a||{}); for(const k in (b||{})) o[k]=lww(o[k],b[k]); return o; }
 function mergeSession(a,b){ if(!a) return b; if(!b) return a;
   return {id:a.id,n:Math.min(a.n,b.n)||a.n,created:Math.min(a.created,b.created),t:Math.max(a.t||0,b.t||0),plan:lww(a.plan,b.plan),timer:lww(a.timer,b.timer),
-    vocab:mergeItems(a.vocab,b.vocab),fix:mergeItems(a.fix,b.fix),notes:lww(a.notes,b.notes),sum:mergeItems(a.sum,b.sum)}; }
+    vocab:mergeItems(a.vocab,b.vocab),fix:mergeItems(a.fix,b.fix),notes:lww(a.notes,b.notes),sum:mergeItems(a.sum,b.sum),y:mergeY(a.y,b.y)}; }
+function mergeY(a,b){ if(!a) return b; if(!b||a===b) return a; try{ return b64(Y.mergeUpdates([unb64(a),unb64(b)])); }catch(e){ return a; } }
 function mergeRoom(a,b){ if(!a) return b; if(!b) return a; const s=Object.assign({},a.sessions);
   for(const k in b.sessions) s[k]=mergeSession(s[k],b.sessions[k]);
   return {v:1,name:lww(a.name,b.name),turn:lww(a.turn,b.turn),cur:lww(a.cur,b.cur),sessions:s}; }
+function mergeRoomLive(other){ R=mergeRoom(R,other); for(const [sid,o] of YD){ const y=R.sessions[sid]&&R.sessions[sid].y; if(y) applyY(sid,unb64(y)); } }
 const S=()=>R.sessions[R.cur.v];
 
 /* save: read → merge → write with revision check, debounced */
@@ -400,7 +441,7 @@ async function saveNow(){
     for(let i=0;i<4;i++){
       const r=await Store.put(K.id,await enc(R),REV);
       if(r>0){ REV=r; break; }
-      const cur=await Store.get(K.id); if(cur){ R=mergeRoom(R,await dec(cur.data)); REV=cur.rev; }
+      const cur=await Store.get(K.id); if(cur){ mergeRoomLive(await dec(cur.data)); REV=cur.rev; }
     }
     $("#n-saved").textContent=t("savedAt")+" · "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
   }catch(e){ console.warn(e); $("#n-saved").textContent=t("saveFail"); setTimeout(saveSoon,8000); }
@@ -470,7 +511,7 @@ async function enterWith(bits,me,remember){
   R=await dec(row.data); REV=row.rev;
   ME={id:uid(),name:me.name,learn:me.learn};
   try{ localStorage.setItem("ponte-me",JSON.stringify(me)); if(remember!==false) localStorage.setItem("ponte-room-"+ROOM,JSON.stringify({bits:b64(bits),me})); }catch(e){}
-  show("room"); openBus(); renderAll(); callUI(); setInterval(tick,500); setInterval(()=>presence(),9000); setInterval(prunePeers,5000);
+  show("room"); openBus(); renderAll(); renderLessonMode(); callUI(); setInterval(tick,500); setInterval(()=>presence(),9000); setInterval(prunePeers,5000);
 }
 $("#b-leave").addEventListener("click",()=>{ if(!confirm(t("confirmLeave"))) return; try{ localStorage.removeItem("ponte-room-"+ROOM); }catch(e){} send("bye",{}); hangup(); location.reload(); });
 
@@ -483,12 +524,14 @@ async function handleMsg(m){
   if(!m||m.f===ME.id) return; let b; try{ b=await dec(m.e); }catch(e){ return; }
   const from=m.f;
   if(b.type==="here"){ const was=PEERS.get(from); PEERS.set(from,{name:b.name,learn:b.learn,call:b.call,seen:now()}); if(b.ask) presence(false);
-    if(!was){ renderPeople(); send("sync",{room:R}); } else renderPeople();
+    if(!was){ renderPeople(); send("sync",{room:liteRoom()}); } else renderPeople();
     if(b.call&&LOCALSTREAM&&!PC) startPC(from); callUI(); return; }
   if(b.type==="bye"){ PEERS.delete(from); if(PEER===from) closePC(); renderPeople(); callUI(); return; }
   const p=PEERS.get(from); if(p) p.seen=now();
-  if(b.type==="sync"){ R=mergeRoom(R,b.room); renderAll(); return; }
-  if(b.type==="chg"){ const before=R.cur.v; applyChange(b.kind,b.data); if(b.kind==="cur"&&R.cur.v!==before) toast(t("newStarted",(p&&p.name)||"…")); renderAll(true); return; }
+  if(b.type==="sync"){ mergeRoomLive(b.room); renderAll(); return; }
+  if(b.type==="y"){ if(R.sessions[b.sid]) applyY(b.sid,unb64(b.u)); return; }
+  if(b.type==="typing"){ showTyping(b.where,(p&&p.name)||""); return; }
+  if(b.type==="chg"){ const before=R.cur.v; if(b.kind==="session"&&b.data&&b.data.y) { /* merged in applyChange */ } applyChange(b.kind,b.data); if(b.kind==="cur"&&R.cur.v!==before) toast(t("newStarted",(p&&p.name)||"…")); renderAll(true); return; }
   if(b.type==="hang"){ if(PEER===from) closePC(); return; }
   if(b.type==="sig") return onSignal(from,b);
 }
@@ -535,8 +578,9 @@ async function onSignal(from,b){
     if(b.desc){ const offerCollision=b.desc.type==="offer"&&(makingOffer||pc.signalingState!=="stable");
       ignoreOffer=!pc._polite&&offerCollision; if(ignoreOffer) return;
       await pc.setRemoteDescription(b.desc);
+      for(const c of (pc._candQ||[]).splice(0)){ try{ await pc.addIceCandidate(c); }catch(e){} }
       if(b.desc.type==="offer"){ await pc.setLocalDescription(); send("sig",{to:from,desc:pc.localDescription.toJSON()}); } }
-    else if(b.cand){ try{ await pc.addIceCandidate(b.cand); }catch(e){ if(!ignoreOffer) console.warn(e); } }
+    else if(b.cand){ if(!pc.remoteDescription){ (pc._candQ||(pc._candQ=[])).push(b.cand); return; } try{ await pc.addIceCandidate(b.cand); }catch(e){ if(!ignoreOffer) console.warn(e); } }
   }catch(e){ console.warn(e); }
 }
 function closePC(){ if(PC){ try{ PC.close(); }catch(e){} } PC=null; PEER=null; camSender=null; $("#rv").srcObject=null; callUI(); }
@@ -598,7 +642,7 @@ $("#p-first").addEventListener("change",e=>change("plan",{sid:S().id,item:Object
 $("#p-min").addEventListener("change",e=>change("plan",{sid:S().id,item:Object.assign({},S().plan,{min:+e.target.value,t:now()})}));
 
 /* ---------- words, corrections, notes, summaries ---------- */
-let TAB="vocab", VL=null, FL=null;
+let TAB="text", VL=null, FL=null;
 const guessL=txt=>/[\u3400-\u9fff]/.test(txt)?"zh":/[a-zA-ZÀ-ÿ]/.test(txt)?"pt":null;
 const curLang=()=>{ const ph=phases(), el=elapsed(); return el<ph[0].m*60000?ph[0].l:ph[1].l; };
 $$(".tabs button").forEach(b=>b.addEventListener("click",()=>{ TAB=b.dataset.tab; renderAll(); }));
@@ -613,8 +657,6 @@ $("#v-add").addEventListener("click",addVocab); $("#f-add").addEventListener("cl
 ["#v-w","#v-m"].forEach(s=>$(s).addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.isComposing) addVocab(); }));
 ["#f-bad","#f-good","#f-note"].forEach(s=>$(s).addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.isComposing) addFix(); }));
 document.addEventListener("click",e=>{ const x=e.target.closest("[data-del]"); if(!x) return; const [kind,id]=x.dataset.del.split(":"); const it=S()[kind][id]; if(it) change(kind,{sid:S().id,item:Object.assign({},it,{del:true,t:now()})}); });
-let noteT=null, noteTyping=0;
-$("#n-text").addEventListener("input",e=>{ noteTyping=now(); clearTimeout(noteT); const v=e.target.value; noteT=setTimeout(()=>change("notes",{sid:S().id,item:{text:v,t:now(),by:ME.name}}),500); });
 document.addEventListener("input",e=>{ const ta=e.target.closest&&e.target.closest("[data-sum]"); if(!ta) return; clearTimeout(ta._t); const v=ta.value, key=ta.dataset.sum; ta._t=setTimeout(()=>change("sum",{sid:S().id,key,item:{name:ME.name,text:v,t:now()}}),600); });
 
 function sorted(o){ return Object.values(o||{}).filter(x=>!x.del).sort((a,b)=>(b.c||0)-(a.c||0)); }
@@ -622,12 +664,12 @@ function renderAll(remote){
   if(!R) return; const s=S();
   $("#title").textContent=R.name.v||"桥 · Ponte"; document.title=(R.name.v||"桥")+" · Ponte";
   $("#s-title").textContent=t("sessionN",s.n); $("#s-date").textContent=new Date(s.created).toLocaleDateString(UIL==="zh"?"zh-CN":UIL==="pt"?"pt-BR":"en-GB",{weekday:"short",day:"numeric",month:"short"});
-  $$(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===TAB)); ["vocab","fix","notes","sum"].forEach(k=>$("#p-"+k).hidden=k!==TAB);
+  $$(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===TAB)); ["text","vocab","fix","notes","sum"].forEach(k=>$("#p-"+k).hidden=k!==TAB);
   const cl=guessL($("#v-w").value)||curLang(); const fl=guessL($("#f-good").value||$("#f-bad").value)||curLang(); $$("[data-vl]").forEach(b=>b.setAttribute("aria-pressed",(VL||cl)===b.dataset.vl)); $$("[data-fl]").forEach(b=>b.setAttribute("aria-pressed",(FL||fl)===b.dataset.fl));
   const V=sorted(s.vocab), F=sorted(s.fix); $("#n-vocab").textContent=V.length; $("#n-fix").textContent=F.length;
   $("#l-vocab").innerHTML=V.length?V.map(x=>`<li><span class="dot ${x.l}"></span><div><div class="w" lang="${x.l==="zh"?"zh-CN":"pt-BR"}">${esc(x.w)}</div>${x.m?`<div class="m">${esc(x.m)}</div>`:""}<div class="by">${esc(t("by",x.by||""))}</div></div><button class="x" data-del="vocab:${x.id}" aria-label="delete">×</button></li>`).join(""):`<li class="empty" style="border:0;background:none;display:block">${esc(t("noWords"))}</li>`;
   $("#l-fix").innerHTML=F.length?F.map(x=>`<li><span class="dot ${x.l}"></span><div lang="${x.l==="zh"?"zh-CN":"pt-BR"}">${x.bad?`<span class="bad">${esc(x.bad)}</span> → `:""}<span class="good">${esc(x.good)}</span>${x.note?`<div class="m">${esc(x.note)}</div>`:""}<div class="by">${esc(t("by",x.by||""))}</div></div><button class="x" data-del="fix:${x.id}" aria-label="delete">×</button></li>`).join(""):`<li class="empty" style="border:0;background:none;display:block">${esc(t("noFix"))}</li>`;
-  const ta=$("#n-text"); if(document.activeElement!==ta||now()-noteTyping>2500){ if(ta.value!==s.notes.text) ta.value=s.notes.text||""; }
+  renderY();
   // summaries: one box per person (me editable, others read-only)
   const names=new Set([ME.name,...[...PEERS.values()].map(p=>p.name),...Object.values(s.sum).map(x=>x.name)]);
   const g=$("#sumgrid"); const focused=document.activeElement&&document.activeElement.dataset&&document.activeElement.dataset.sum;
@@ -635,6 +677,94 @@ function renderAll(remote){
   else [...g.querySelectorAll(".ro")].forEach(el=>{ const n=el.previousElementSibling.textContent, it=s.sum[n]; el.textContent=it?it.text:""; });
   $("#p-first").value=s.plan.first; $("#p-min").value=String(s.plan.min);
   renderPeople(); tick();
+}
+
+
+/* ---------- shared texts: lesson + notes, edited by both at the same time (Yjs CRDT) ---------- */
+const YD=new Map(); // session id → {doc,text,notes,marks}
+function yOf(sid){
+  if(YD.has(sid)) return YD.get(sid);
+  const doc=new Y.Doc(), o={doc,text:doc.getText("text"),notes:doc.getText("notes"),marks:doc.getMap("marks")}; YD.set(sid,o);
+  const s=R.sessions[sid];
+  if(s&&s.y){ try{ Y.applyUpdate(doc,unb64(s.y),"load"); }catch(e){ console.warn(e); } }
+  else if(s&&s.notes&&s.notes.text) doc.transact(()=>o.notes.insert(0,s.notes.text),"load");
+  doc.on("update",(u,origin)=>{ const ss=R.sessions[sid]; if(!ss) return; ss.y=b64(Y.encodeStateAsUpdate(doc));
+    if(origin==="local"){ send("y",{sid,u:b64(u)}); saveSoon(); } else if(origin==="remote"){ saveSoon(); } });
+  return o;
+}
+let ROUND=0;
+function applyY(sid,u){ const o=yOf(sid), sel=capSel(o); Y.applyUpdate(o.doc,u,"remote"); if(sid===R.cur.v){ renderY(sel); } }
+// keep the cursor where it was when the partner's change arrives
+const TA=()=>[[$("#x-edit"),"text"],[$("#n-text"),"notes"]];
+function capSel(o){ const out=[]; for(const [ta,k] of TA()){ if(document.activeElement===ta&&R.cur.v&&yOf(R.cur.v)===o) out.push([ta,Y.createRelativePositionFromTypeIndex(o[k],ta.selectionStart),Y.createRelativePositionFromTypeIndex(o[k],ta.selectionEnd)]); } return out; }
+let composing=false, pendingRender=false;
+function renderY(sel){
+  if(!R) return; const o=yOf(R.cur.v);
+  if(composing){ pendingRender=true; return; }
+  for(const [ta,k] of TA()){ const v=o[k].toString(); if(ta.value!==v) ta.value=v; }
+  (sel||[]).forEach(([ta,a,b])=>{ const A=Y.createAbsolutePositionFromRelativePosition(a,o.doc), B=Y.createAbsolutePositionFromRelativePosition(b,o.doc); if(A&&B) try{ ta.setSelectionRange(A.index,B.index); }catch(e){} });
+  renderLesson(o);
+}
+function bindTA(ta,key){
+  const push=()=>{ const yt=yOf(R.cur.v)[key], ov=yt.toString(), nv=ta.value; if(ov===nv) return;
+    let a=0; while(a<ov.length&&a<nv.length&&ov[a]===nv[a]) a++;
+    let b=0; while(b<ov.length-a&&b<nv.length-a&&ov[ov.length-1-b]===nv[nv.length-1-b]) b++;
+    yt.doc.transact(()=>{ if(ov.length-a-b>0) yt.delete(a,ov.length-a-b); if(nv.length-a-b>0) yt.insert(a,nv.slice(a,nv.length-b)); },"local");
+    typingPing(key); };
+  ta.addEventListener("input",e=>{ if(e.isComposing||composing) return; push(); });
+  ta.addEventListener("compositionstart",()=>{ composing=true; });
+  ta.addEventListener("compositionend",()=>{ composing=false; push(); if(pendingRender){ pendingRender=false; renderY(); } });
+}
+bindTA($("#x-edit"),"text"); bindTA($("#n-text"),"notes");
+let typT=0; function typingPing(where){ if(now()-typT>1500){ typT=now(); send("typing",{where}); } }
+const typHide={}; function showTyping(where,name){ const el=$(where==="notes"?"#n-typing":"#x-typing"); if(!el) return; el.textContent=t("typingX",name); clearTimeout(typHide[where]); typHide[where]=setTimeout(()=>el.textContent="",3500); }
+
+/* lesson: read view with shared marks and comments */
+let XMODE="read", SELR=null, MSEL=null;
+$("#x-mode").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; XMODE=b.dataset.m; renderLessonMode(); });
+$("#b-wide").addEventListener("click",()=>{ document.body.classList.toggle("wide"); $("#b-wide").firstElementChild.textContent=t(document.body.classList.contains("wide")?"narrow":"wide"); });
+function renderLessonMode(){ $$("#x-mode button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===XMODE)); $("#x-read").hidden=XMODE!=="read"; $("#x-edit").hidden=XMODE!=="edit"; $("#x-hint").textContent=t(XMODE==="read"?"readHint":"editHint"); if(XMODE==="edit") $("#selbar").hidden=true; renderLesson(yOf(R.cur.v)); }
+function markRanges(o){ const out=[]; o.marks.forEach((m,id)=>{ if(!m||m.del) return; try{ const A=Y.createAbsolutePositionFromRelativePosition(Y.decodeRelativePosition(unb64(m.s)),o.doc), B=Y.createAbsolutePositionFromRelativePosition(Y.decodeRelativePosition(unb64(m.e)),o.doc);
+  if(A&&B&&B.index>A.index) out.push({id,a:A.index,b:B.index,m}); }catch(e){} }); return out.sort((x,y)=>x.a-y.a); }
+function renderLesson(o){
+  const el=$("#x-read"), txt=o.text.toString(), ms=markRanges(o); el.dataset.empty=t("lessonEmpty");
+  el.setAttribute("lang",guessL(txt)==="zh"?"zh-CN":"pt-BR");
+  if(!txt){ el.innerHTML=""; } else {
+    const cuts=new Set([0,txt.length]); ms.forEach(r=>{ cuts.add(r.a); cuts.add(r.b); }); const pts=[...cuts].sort((a,b)=>a-b); let h="";
+    for(let i=0;i<pts.length-1;i++){ const a=pts[i], b=pts[i+1], on=ms.filter(r=>r.a<=a&&r.b>=b), seg=esc(txt.slice(a,b));
+      if(!on.length){ h+=seg; continue; } const top=on[on.length-1]; h+=`<mark class="${top.m.c||""}${top.m.note?" c":""}${MSEL===top.id?" on":""}" data-mk="${top.id}" title="${esc(top.m.note||"")}">${seg}</mark>`; }
+    el.innerHTML=h; }
+  $("#l-marks").innerHTML=ms.length?ms.map(r=>`<li class="${MSEL===r.id?"on":""}" data-mli="${r.id}"><span class="dot ${guessL(txt.slice(r.a,r.b))||"pt"}"></span><div><div class="w">${esc(txt.slice(r.a,r.b))}</div>${r.m.note?`<div class="m">${esc(r.m.note)}</div>`:""}<div class="by">${esc(t("by",r.m.by||""))}</div></div><button class="x" data-mdel="${r.id}" aria-label="delete">×</button></li>`).join(""):(txt?`<li class="empty" style="border:0;background:none;display:block">${esc(t("noMarks"))}</li>`:"");
+}
+function selOffsets(){ const sel=window.getSelection(), root=$("#x-read"); if(!sel||sel.rangeCount===0||sel.isCollapsed) return null; const r=sel.getRangeAt(0);
+  if(!root.contains(r.startContainer)||!root.contains(r.endContainer)) return null;
+  const pre=document.createRange(); pre.selectNodeContents(root); pre.setEnd(r.startContainer,r.startOffset); const a=pre.toString().length; const b=a+r.toString().length;
+  return b>a?{a,b}:null; }
+document.addEventListener("selectionchange",()=>{ if(!R||XMODE!=="read") return; const o=selOffsets(); if(o){ SELR=o; const txt=yOf(R.cur.v).text.toString(); $("#sel-q").textContent="“"+txt.slice(o.a,o.b)+"”"; $("#selbar").hidden=false; } });
+function addMark(c){ if(!SELR) return; const o=yOf(R.cur.v), id=uid(), note=$("#sel-note").value.trim();
+  const rel=i=>b64(Y.encodeRelativePosition(Y.createRelativePositionFromTypeIndex(o.text,i)));
+  o.doc.transact(()=>o.marks.set(id,{s:rel(SELR.a),e:rel(SELR.b),c,note,by:ME.name,t:now()}),"local"); return o.text.toString().slice(SELR.a,SELR.b); }
+function closeSel(){ SELR=null; $("#sel-note").value=""; $("#selbar").hidden=true; try{ window.getSelection().removeAllRanges(); }catch(e){} }
+$("#sel-mark").addEventListener("click",()=>{ addMark(""); closeSel(); renderLesson(yOf(R.cur.v)); });
+$("#sel-vocab").addEventListener("click",()=>{ const w=addMark("g"); const note=$("#sel-note").value.trim(); closeSel(); if(w) change("vocab",{sid:S().id,item:{id:uid(),w:w.trim(),m:note,l:guessL(w)||curLang(),by:ME.name,c:now(),t:now()}}); toast(t("toVocab")+" ✓"); });
+$("#sel-x").addEventListener("click",closeSel);
+document.addEventListener("click",e=>{ const mk=e.target.closest("[data-mk],[data-mli]"); if(mk&&!(window.getSelection()&&!window.getSelection().isCollapsed)){ const id=mk.dataset.mk||mk.dataset.mli; MSEL=MSEL===id?null:id; renderLesson(yOf(R.cur.v)); if(mk.dataset.mk){ const li=document.querySelector(`[data-mli="${id}"]`); if(li) li.scrollIntoView({block:"nearest",behavior:"smooth"}); } }
+  const del=e.target.closest("[data-mdel]"); if(del){ const o=yOf(R.cur.v), id=del.dataset.mdel; o.doc.transact(()=>o.marks.delete(id),"local"); renderLesson(o); } });
+function liteRoom(){ const c=R.cur.v; return {v:1,name:R.name,turn:R.turn,cur:R.cur,sessions:{[c]:R.sessions[c]}}; }
+
+/* Word / PDF via PrintKit */
+function exportPK(kind){
+  const s=S(), o=yOf(s.id), txt=o.text.toString(), ms=markRanges(o), d=new Date(s.created).toISOString().slice(0,10), name=R.name.v||"桥 · Ponte";
+  const P=x=>String(x||"").split(/\n/).filter(l=>l.trim()).map(l=>[l]);
+  const blocks=[];
+  if(ms.length) blocks.push({label:t("marks"),early:true,paras:ms.map(r=>["“"+txt.slice(r.a,r.b)+"”"+(r.m.note?" — "+r.m.note:"")+"  ("+(r.m.by||"")+")"])});
+  const F=sorted(s.fix).reverse(); if(F.length) blocks.push({label:t("fixes"),paras:F.map(x=>[(x.bad?x.bad+" → ":"")+x.good+(x.note?"  ("+x.note+")":"")])});
+  const nt=o.notes.toString(); if(nt.trim()) blocks.push({label:t("notes"),paras:P(nt)});
+  const sums=Object.values(s.sum).filter(x=>x.text&&x.text.trim()); if(sums.length) blocks.push({label:t("summary"),paras:sums.flatMap(x=>[[x.name+":"],...P(x.text)])});
+  const doc={title:name+" · "+t("sessionN",s.n),meta:d,lang:"zh-CN",paras:P(txt),
+    gloss:{label:t("vocab"),rows:sorted(s.vocab).reverse().map(x=>({w:x.w,m:[x.m||""]}))},blocks};
+  const opt={title:`${name} ${d}`,filename:`Ponte ${d} ${t("sessionN",s.n)}`,ea:"zh",brand:{name:"桥 · Ponte",url:location.host+location.pathname,accent:"#2c6b64",docFont:"Georgia"}};
+  if(kind==="docx") PrintKit.docx([doc],opt); else PrintKit.print([doc],opt);
 }
 
 /* ---------- sessions: new, history, export ---------- */
@@ -648,13 +778,14 @@ $("#m-close").addEventListener("click",()=>$("#m-hist").hidden=true);
 $("#m-hist").addEventListener("click",e=>{ if(e.target.id==="m-hist") $("#m-hist").hidden=true; });
 $("#a-save").addEventListener("click",()=>{ const nm=$("#a-name").value.trim(); if(nm&&nm!==R.name.v) change("name",{v:nm,t:now()});
   change("turn",{url:$("#a-turl").value.trim(),user:$("#a-tuser").value.trim(),pass:$("#a-tpass").value,t:now()}); toast(t("savedAt")); });
-$("#b-export").addEventListener("click",()=>{
+function exportMd(){
   const s=S(), d=new Date(s.created).toISOString().slice(0,10), L=x=>x.l==="zh"?"中文":"PT";
   let md=`# ${R.name.v||"Ponte"} — ${t("sessionN",s.n)} · ${d}\n\n## ${t("vocab")}\n`+sorted(s.vocab).reverse().map(x=>`- [${L(x)}] **${x.w}**${x.m?" — "+x.m:""}`).join("\n");
   md+=`\n\n## ${t("fixes")}\n`+sorted(s.fix).reverse().map(x=>`- [${L(x)}] ${x.bad?"~~"+x.bad+"~~ → ":""}**${x.good}**${x.note?" ("+x.note+")":""}`).join("\n");
-  md+=`\n\n## ${t("notes")}\n${s.notes.text||""}\n\n## ${t("summary")}\n`+Object.values(s.sum).map(x=>`### ${x.name}\n${x.text}`).join("\n\n")+"\n";
+  md+=`\n\n## ${t("notes")}\n${yOf(s.id).notes.toString()}\n\n## ${t("summary")}\n`+Object.values(s.sum).map(x=>`### ${x.name}\n${x.text}`).join("\n\n")+"\n";
   const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([md],{type:"text/markdown"})); a.download=`ponte-${d}-${s.n}.md`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-});
+}
+$("#b-export").addEventListener("click",e=>{ e.stopPropagation(); PrintKit.menu($("#b-export"),[{label:t("exportWord"),run:()=>exportPK("docx")},{label:t("exportPdf"),run:()=>exportPK("print")},{label:t("exportMd"),run:exportMd}]); });
 window.addEventListener("hashchange",()=>{ if(roomFromHash()!==ROOM) location.reload(); });
 window.addEventListener("pagehide",()=>{ try{ if(BUS) send("bye",{}); }catch(e){} });
 if(LOCAL) window.__ponte={get R(){return R;},get PC(){return PC;},get PEERS(){return PEERS;}};

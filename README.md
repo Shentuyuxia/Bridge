@@ -14,7 +14,11 @@ A private language-exchange room for two: video call, a timer split by language,
 3. 两个人都打开链接，填名字、选「我在学」，输入密码。勾选「记住我」后，这台设备下次直接进入。
 4. 点「开始视频通话」。两个人都点了以后就会自动接通。
 5. 计时器：默认中文 30 分钟、葡语 30 分钟，可以改先说哪种、每段多长。换语言和结束时会响一下。
-6. 「新的一次」开始新一次学习；以前的都在「历次学习」里；「导出」下载这一次的 Markdown 文件（词汇、纠错、笔记、总结）。
+6. 「课文」：把课文贴进「编辑」，两个人可以同时修改（Yjs 协同编辑，互不覆盖）。在「阅读 · 标注」里选中一段文字，可以标记、写批注，或者直接加到词汇；标注跟着文字走，前面改了字也不会错位。「放大课文」让课文区变宽、视频变小，适合边视频边一起读。
+7. 「笔记」同样是两个人同时编辑。
+8. 「新的一次」开始新一次学习；以前的都在「历次学习」里；「导出」可以下载 Word 文件（.docx）、打印 / 存为 PDF，或者 Markdown 文本：包含课文、标注、词汇、纠错、笔记和总结。
+
+屏幕共享只能看、不能一起改（所有视频工具都是这样）；要一起改的内容放在「课文」里。
 
 ## 技术和隐私
 
@@ -32,6 +36,8 @@ A private language-exchange room for two: video call, a timer split by language,
 ```
 index.html            整个应用
 vendor/supabase.js    supabase-js（MIT）
+vendor/yjs.min.js     Yjs 协同编辑（MIT，见 vendor/yjs-LICENSE）
+vendor/printkit.js    Word / PDF 导出（和 Entrelinhas、字里、栞 共用）
 fonts/                Source Sans 3、Source Serif 4（SIL OFL 1.1）
 icon.svg, icon-*.png, manifest.webmanifest
 ```
