@@ -82,6 +82,7 @@ label.f{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
 .vid .st{position:absolute;left:12px;top:12px;font-size:12.5px;color:#fff;background:rgba(0,0,0,.45);padding:3px 10px;border-radius:999px;z-index:3}
 .vid .camoff{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;color:#cfd8d5;background:#0f1517;z-index:1}
 .vid .camoff .av{width:84px;height:84px;border-radius:50%;background:#2a3a3e;color:#fff;display:grid;place-items:center;font-size:34px;font-weight:600}
+.vid .sound{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;font-size:16px;padding:12px 20px}
 .vid .rname{position:absolute;left:12px;bottom:70px;font-size:13px;color:#fff;background:rgba(0,0,0,.45);padding:2px 9px;border-radius:999px;z-index:3}
 .people{display:flex;gap:8px;flex-wrap:wrap;font-size:13px}
 .people span{background:var(--sunk);border-radius:999px;padding:3px 10px}
@@ -260,6 +261,7 @@ ul.items li.on{border-color:var(--acc)}
           <div class="idle" id="idle"><div><div id="idle-t" style="font-size:17px"></div><div class="who" id="idle-w"></div><div style="margin-top:14px"><button class="btn primary" id="b-call"><span data-i="startCall"></span></button></div></div></div>
           <div class="st" id="cst" hidden></div>
           <div class="rname" id="rname" hidden></div>
+          <button class="btn primary sound" id="b-sound" hidden>🔊 <span data-i="tapSound"></span></button>
           <div class="camoff" id="rcamoff" hidden><div class="av" id="rcam-av"></div><div class="small" data-i="camIsOff"></div></div>
           <div class="bar" id="cbar" hidden>
             <button class="cb" id="b-mic" aria-label="mic"></button>
@@ -448,6 +450,7 @@ const T={
  connecting:["正在连接…","Conectando…","Connecting…"], connected:["已连接","Conectado","Connected"], reconnecting:["连接断了，正在重连…","Conexão caiu, reconectando…","Connection lost, reconnecting…"],
  failed:["连不上对方。可能是网络防火墙挡住了，可以在「历次学习 → 高级」里填一个 TURN 服务器。","Não foi possível conectar. Talvez um firewall bloqueie; dá para configurar um servidor TURN em «Sessões → Avançado».","Couldn't connect. A firewall may be blocking it; you can add a TURN server under “Sessions → Advanced”."],
  startsOff:["麦克风和摄像头现在都关着，点下面的按钮打开。","Microfone e câmera estão desligados. Toque nos botões abaixo para ligar.","Microphone and camera are off. Tap the buttons below to turn them on."],
+ tapSound:["点这里听对方的声音","Toque para ouvir","Tap to hear them"],
  camIsOff:["摄像头关着","Câmera desligada","Camera off"],
  noCam:["打不开摄像头或麦克风。请在浏览器里允许访问，再试一次。","Não foi possível abrir câmera ou microfone. Permita o acesso no navegador e tente de novo.","Couldn't open camera or microphone. Allow access in the browser and try again."],
  youAlone:["只有你在这里","Só você está aqui","Only you are here"],
@@ -816,7 +819,7 @@ function startPC(peer){
   if(PC) closePC(); PEER=peer; const polite=ME.id<peer;
   const pc=PC=new RTCPeerConnection({iceServers:iceServers()});
   LOCALSTREAM.getTracks().forEach(tr=>{ const s=pc.addTrack(tr,LOCALSTREAM); if(tr.kind==="video") camSender=s; });
-  pc.ontrack=e=>{ const rv=$("#rv"); if(rv.srcObject!==e.streams[0]){ rv.srcObject=e.streams[0]; } callUI(); };
+  pc.ontrack=e=>{ const rv=$("#rv"); if(rv.srcObject!==e.streams[0]){ rv.srcObject=e.streams[0]; } playRemote(); callUI(); };
   pc.onicecandidate=e=>{ if(e.candidate) send("sig",{to:peer,cand:e.candidate.toJSON()}); };
   pc.onnegotiationneeded=async()=>{ try{ makingOffer=true; await pc.setLocalDescription(); send("sig",{to:peer,desc:pc.localDescription.toJSON()}); }catch(e){ console.warn(e); } finally{ makingOffer=false; } };
   pc.onconnectionstatechange=()=>{ if(pc.connectionState==="failed") pc.restartIce(); callUI(); };
@@ -836,7 +839,11 @@ async function onSignal(from,b){
     else if(b.cand){ if(!pc.remoteDescription){ (pc._candQ||(pc._candQ=[])).push(b.cand); return; } try{ await pc.addIceCandidate(b.cand); }catch(e){ if(!ignoreOffer) console.warn(e); } }
   }catch(e){ console.warn(e); }
 }
-function closePC(){ if(PC){ try{ PC.close(); }catch(e){} } PC=null; PEER=null; camSender=null; $("#rv").srcObject=null; callUI(); }
+/* some browsers (Safari, iPhone) block sound until the page is tapped: then show a big "tap for sound" button */
+function playRemote(){ const rv=$("#rv"); if(!rv.srcObject) return; const p=rv.play(); if(p&&p.catch) p.then(()=>{ $("#b-sound").hidden=true; }).catch(()=>{ $("#b-sound").hidden=false; }); }
+document.addEventListener("click",e=>{ const rv=$("#rv"); if(rv&&rv.srcObject&&rv.paused&&!e.target.closest("#b-sound")) playRemote(); },true);
+$("#b-sound").addEventListener("click",playRemote);
+function closePC(){ if(PC){ try{ PC.close(); }catch(e){} } PC=null; PEER=null; camSender=null; $("#rv").srcObject=null; $("#b-sound").hidden=true; callUI(); }
 function hangup(){ stopVAD(); if(PC&&BUS) send("hang",{}); closePC(); if(SCREEN){ SCREEN.getTracks().forEach(x=>x.stop()); SCREEN=null; } if(LOCALSTREAM){ LOCALSTREAM.getTracks().forEach(x=>x.stop()); LOCALSTREAM=null; } $("#lv").srcObject=null; $("#lv").hidden=true; if(BUS) presence(); callUI(); }
 $("#b-call").addEventListener("click",startCall);
 $("#b-end").addEventListener("click",hangup);
