@@ -80,6 +80,8 @@ label.f{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
 .cb:hover{background:rgba(255,255,255,.26)}.cb svg{width:22px;height:22px}
 .cb.off{background:#fff;color:#1f2a2e}.cb.end{background:#c0392b}
 .vid .st{position:absolute;left:12px;top:12px;font-size:12.5px;color:#fff;background:rgba(0,0,0,.45);padding:3px 10px;border-radius:999px;z-index:3}
+.vid .camoff{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;color:#cfd8d5;background:#0f1517;z-index:1}
+.vid .camoff .av{width:84px;height:84px;border-radius:50%;background:#2a3a3e;color:#fff;display:grid;place-items:center;font-size:34px;font-weight:600}
 .vid .rname{position:absolute;left:12px;bottom:70px;font-size:13px;color:#fff;background:rgba(0,0,0,.45);padding:2px 9px;border-radius:999px;z-index:3}
 .people{display:flex;gap:8px;flex-wrap:wrap;font-size:13px}
 .people span{background:var(--sunk);border-radius:999px;padding:3px 10px}
@@ -258,6 +260,7 @@ ul.items li.on{border-color:var(--acc)}
           <div class="idle" id="idle"><div><div id="idle-t" style="font-size:17px"></div><div class="who" id="idle-w"></div><div style="margin-top:14px"><button class="btn primary" id="b-call"><span data-i="startCall"></span></button></div></div></div>
           <div class="st" id="cst" hidden></div>
           <div class="rname" id="rname" hidden></div>
+          <div class="camoff" id="rcamoff" hidden><div class="av" id="rcam-av"></div><div class="small" data-i="camIsOff"></div></div>
           <div class="bar" id="cbar" hidden>
             <button class="cb" id="b-mic" aria-label="mic"></button>
             <button class="cb" id="b-cam" aria-label="camera"></button>
@@ -444,6 +447,7 @@ const T={
  partnerHere:["{0} 在空间里","{0} está no espaço","{0} is here"], partnerInCall:["{0} 已经在通话中","{0} já está na chamada","{0} is already in the call"],
  connecting:["正在连接…","Conectando…","Connecting…"], connected:["已连接","Conectado","Connected"], reconnecting:["连接断了，正在重连…","Conexão caiu, reconectando…","Connection lost, reconnecting…"],
  failed:["连不上对方。可能是网络防火墙挡住了，可以在「历次学习 → 高级」里填一个 TURN 服务器。","Não foi possível conectar. Talvez um firewall bloqueie; dá para configurar um servidor TURN em «Sessões → Avançado».","Couldn't connect. A firewall may be blocking it; you can add a TURN server under “Sessions → Advanced”."],
+ camIsOff:["摄像头关着","Câmera desligada","Camera off"],
  noCam:["打不开摄像头或麦克风。请在浏览器里允许访问，再试一次。","Não foi possível abrir câmera ou microfone. Permita o acesso no navegador e tente de novo.","Couldn't open camera or microphone. Allow access in the browser and try again."],
  youAlone:["只有你在这里","Só você está aqui","Only you are here"],
  session:["本次学习","Esta sessão","This session"], now:["现在说","Agora:","Now:"], done:["时间到","Tempo esgotado","Time's up"],
@@ -760,13 +764,14 @@ $("#b-leave").addEventListener("click",()=>{ if(!confirm(t("confirmLeave"))) ret
 
 /* ---------- presence + messages ---------- */
 function openBus(){ BUS=busOpen(K.id.slice(0,40),onMsg); presence(true); }
-function presence(ask){ send("here",{name:ME.name,learn:ME.learn,call:!!LOCALSTREAM,ask:!!ask}); }
+const camOn=()=>{ const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; return !!(v&&v.enabled); };
+function presence(ask){ send("here",{name:ME.name,learn:ME.learn,call:!!LOCALSTREAM,cam:camOn()||!!SCREEN,ask:!!ask}); }
 function prunePeers(){ let ch=false; for(const [id,p] of PEERS) if(now()-p.seen>30000){ PEERS.delete(id); ch=true; if(PC&&PEER===id) closePC(); } if(ch){ renderPeople(); callUI(); } }
 function onMsg(m){ INQ=INQ.then(()=>handleMsg(m)).catch(e=>console.warn(e)); }
 async function handleMsg(m){
   if(!m||m.f===ME.id) return; let b; try{ b=await dec(m.e); }catch(e){ return; }
   const from=m.f;
-  if(b.type==="here"){ const was=PEERS.get(from); PEERS.set(from,{name:b.name,learn:b.learn,call:b.call,seen:now()}); if(b.ask) presence(false);
+  if(b.type==="here"){ const was=PEERS.get(from); PEERS.set(from,{name:b.name,learn:b.learn,call:b.call,cam:!!b.cam,seen:now()}); if(!was||was.cam!==!!b.cam) callUI(); if(b.ask) presence(false);
     if(!was){ renderPeople(); send("sync",{room:liteRoom()}); } else renderPeople();
     if(b.call&&LOCALSTREAM&&!PC) startPC(from); callUI(); return; }
   if(b.type==="bye"){ PEERS.delete(from); if(PEER===from) closePC(); renderPeople(); callUI(); return; }
@@ -799,7 +804,8 @@ function iceServers(){ const s=[{urls:["stun:stun.cloudflare.com:3478","stun:stu
 async function startCall(){
   try{ LOCALSTREAM=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:{width:{ideal:1280},height:{ideal:720},facingMode:"user"}}); }
   catch(e){ try{ LOCALSTREAM=await navigator.mediaDevices.getUserMedia({audio:true,video:false}); toast(t("noCam")); }catch(e2){ toast(t("noCam")); return; } }
-  const lv=$("#lv"); lv.srcObject=LOCALSTREAM; lv.hidden=false; startVAD(LOCALSTREAM);
+  const cam=LOCALSTREAM.getVideoTracks()[0]; if(cam) cam.enabled=false; // join with the camera off; turn it on with the camera button
+  const lv=$("#lv"); lv.srcObject=LOCALSTREAM; startVAD(LOCALSTREAM);
   presence(); for(const [id,p] of PEERS) if(p.call){ startPC(id); break; }
   callUI();
 }
@@ -832,14 +838,14 @@ function hangup(){ stopVAD(); if(PC&&BUS) send("hang",{}); closePC(); if(SCREEN)
 $("#b-call").addEventListener("click",startCall);
 $("#b-end").addEventListener("click",hangup);
 $("#b-mic").addEventListener("click",()=>{ const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0]; if(a){ a.enabled=!a.enabled; callUI(); } });
-$("#b-cam").addEventListener("click",()=>{ const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; if(v){ v.enabled=!v.enabled; callUI(); } });
+$("#b-cam").addEventListener("click",()=>{ const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; if(v){ v.enabled=!v.enabled; presence(); callUI(); } });
 $("#b-scr").addEventListener("click",async()=>{
   if(SCREEN){ stopScreen(); return; }
   try{ SCREEN=await navigator.mediaDevices.getDisplayMedia({video:true}); }catch(e){ return; }
   const tr=SCREEN.getVideoTracks()[0]; if(camSender) await camSender.replaceTrack(tr);
-  $("#lv").srcObject=SCREEN; $("#lv").classList.add("screen"); tr.onended=stopScreen; callUI();
+  $("#lv").srcObject=SCREEN; $("#lv").classList.add("screen"); tr.onended=stopScreen; presence(); callUI();
 });
-async function stopScreen(){ if(!SCREEN) return; SCREEN.getTracks().forEach(x=>x.stop()); SCREEN=null; const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; if(camSender&&v) await camSender.replaceTrack(v); $("#lv").srcObject=LOCALSTREAM; $("#lv").classList.remove("screen"); callUI(); }
+async function stopScreen(){ if(!SCREEN) return; SCREEN.getTracks().forEach(x=>x.stop()); SCREEN=null; const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; if(camSender&&v) await camSender.replaceTrack(v); $("#lv").srcObject=LOCALSTREAM; $("#lv").classList.remove("screen"); callUI();  presence(); }
 function callUI(){
   if(!R) return;
   const inCall=!!LOCALSTREAM, peer=PEER&&PEERS.get(PEER), other=[...PEERS.values()][0];
@@ -853,6 +859,8 @@ function callUI(){
   $("#rname").hidden=!live; $("#rname").textContent=peer?peer.name:"";
   const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0], v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0];
   $("#b-mic").innerHTML=a&&!a.enabled?ICON.micOff:ICON.mic; $("#b-mic").classList.toggle("off",!!(a&&!a.enabled));
+  $("#lv").hidden=!inCall||!(SCREEN||(v&&v.enabled));
+  const rOff=!!(live&&peer&&!peer.cam); $("#rcamoff").hidden=!rOff; if(rOff) $("#rcam-av").textContent=(peer.name||"?").trim().slice(0,1).toUpperCase();
   $("#b-cam").innerHTML=v&&!v.enabled?ICON.camOff:ICON.cam; $("#b-cam").classList.toggle("off",!!(v&&!v.enabled)); $("#b-cam").hidden=!v;
   $("#b-scr").innerHTML=ICON.scr; $("#b-scr").hidden=!(navigator.mediaDevices&&navigator.mediaDevices.getDisplayMedia)||!v||/iPhone|iPad|Android/i.test(navigator.userAgent); $("#b-scr").classList.toggle("off",!!SCREEN);
   $("#b-end").innerHTML=ICON.end;
