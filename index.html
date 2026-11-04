@@ -172,6 +172,15 @@ ul.items li.on{border-color:var(--acc)}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:14px;z-index:60;max-width:90vw}
 .sessbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .sessbar .t{font-weight:600}
+.gatebox{margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,0,0,.1)}
+.gatebox h4{margin:0 0 4px;font-size:15px}
+.grow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.grow select{width:auto;padding:6px 10px}
+.gname{font-size:24px;font-weight:700;margin-top:4px;letter-spacing:.02em}
+.gnums{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.gnums button{font:700 20px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;padding:10px 12px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#fff;cursor:pointer}
+.gnums button:hover{border-color:currentColor}
+.linkbtn{background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}
 .qrbox{display:flex;gap:14px;align-items:center;margin:12px 0 4px;flex-wrap:wrap}
 #i-qr{background:#fff;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.12);line-height:0}
 #i-qr svg{width:168px;height:168px;display:block}
@@ -201,6 +210,23 @@ ul.items li.on{border-color:var(--acc)}
     <div class="pick" data-pick="c"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button><button data-l="de" aria-pressed="false"><b>Deutsch</b><span data-i="learnDe"></span></button><button data-l="en" aria-pressed="false"><b>English</b><span data-i="learnEn"></span></button></div>
     <div style="margin-top:16px"><button class="btn primary" id="c-go"><span data-i="create"></span></button></div>
     <div class="err" id="c-err"></div>
+    <p class="small" style="margin-top:14px"><button class="linkbtn" id="c-enter"><span data-i="haveGate"></span></button></p>
+  </section>
+
+  <!-- enter with a room name + number -->
+  <section class="gate card" id="v-enter" hidden>
+    <h2 data-i="enterTitle"></h2>
+    <p class="lead" data-i="enterLead"></p>
+    <label class="f" for="e-gname" data-i="gateName"></label>
+    <input type="text" id="e-gname" maxlength="60" autocomplete="off" data-ph="gateNamePh">
+    <label class="f" for="e-num" data-i="gateNum"></label>
+    <input type="text" id="e-num" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="2255">
+    <label class="f" for="e-name" data-i="yourName"></label>
+    <input type="text" id="e-name" maxlength="40" autocomplete="nickname">
+    <label class="f" data-i="iLearn"></label>
+    <div class="pick" data-pick="e"><button data-l="zh" aria-pressed="false"><b>中文</b><span data-i="learnZh"></span></button><button data-l="pt" aria-pressed="false"><b>Português</b><span data-i="learnPt"></span></button><button data-l="de" aria-pressed="false"><b>Deutsch</b><span data-i="learnDe"></span></button><button data-l="en" aria-pressed="false"><b>English</b><span data-i="learnEn"></span></button></div>
+    <div style="margin-top:16px"><button class="btn primary" id="e-go"><span data-i="enterGo"></span></button></div>
+    <div class="err" id="e-err"></div>
   </section>
 
   <!-- accept a one-time invite -->
@@ -219,7 +245,7 @@ ul.items li.on{border-color:var(--acc)}
   <section class="gate card" id="v-nokey" hidden>
     <h2 data-i="noKeyTitle"></h2>
     <p class="lead" data-i="noKeyLead"></p>
-    <div style="margin-top:16px"><a class="btn" href="./" id="nk-new"><span data-i="createOwn"></span></a></div>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="nk-enter"><span data-i="haveGate"></span></button><a class="btn" href="./" id="nk-new"><span data-i="createOwn"></span></a></div>
   </section>
 
   <!-- room -->
@@ -330,6 +356,22 @@ ul.items li.on{border-color:var(--acc)}
   <div class="qrbox" id="i-qrbox" hidden><div id="i-qr" role="img" aria-label="QR"></div>
     <div class="qrside"><p class="small muted" data-i="qrHint"></p><button class="btn sm" id="i-qrsave"><span data-i="qrSave"></span></button></div></div>
   <p class="small muted" data-i="invWarn"></p>
+  <div class="gatebox">
+    <h4 data-i="gateTitle"></h4>
+    <p class="small muted" data-i="gateLead"></p>
+    <div id="g-setup">
+      <div class="linkbox"><input type="text" id="g-name" maxlength="60" autocomplete="off" data-ph="gateNamePh"><button class="btn sm" id="g-dice" title="🎲">🎲</button></div>
+      <div class="grow"><label class="small" for="g-count" data-i="gateCount"></label><select id="g-count"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+        <button class="btn sm primary" id="g-open"><span data-i="gateOpen"></span></button></div>
+    </div>
+    <div id="g-live" hidden>
+      <div class="gname" id="g-show"></div><div class="small muted" id="g-tr"></div>
+      <div class="gnums" id="g-nums"></div>
+      <p class="small" id="g-left"></p>
+      <div class="grow"><button class="btn sm" id="g-copyall"><span data-i="gateCopyAll"></span></button><button class="btn sm" id="g-close"><span data-i="gateClose"></span></button></div>
+    </div>
+    <div class="err" id="g-err"></div>
+  </div>
   <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button class="btn sm" id="i-new"><span data-i="invNew"></span></button><button class="btn sm" id="i-close"><span data-i="close"></span></button></div></div></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -366,6 +408,24 @@ const T={
  invNew:["再生成一个","Gerar outro","Make another"],
  qrHint:["对方用手机相机扫一下就能打开。二维码和链接是同一个，也只能用一次。","A outra pessoa abre escaneando com a câmera do celular. O QR é o mesmo link e também vale uma vez só.","They can open it by scanning with their phone camera. The QR code is the same link and also works only once."],
  qrSave:["保存二维码图片","Salvar imagem do QR","Save QR image"],
+ gateTitle:["或者：房间名 + 号码","Ou: nome da sala + número","Or: room name + number"],
+ gateLead:["起一个房间名，系统发出几个号码。每个号码只能进一个人，全部用完就关门。24 小时内有效。","Dê um nome à sala; o sistema gera alguns números. Cada número deixa entrar uma pessoa; quando acabam, a porta fecha. Vale 24 horas.","Name the room and get a few numbers. Each number lets one person in once; when they're all used, the door closes. Valid for 24 hours."],
+ gateNamePh:["比如：红色跑鞋","ex.: tênis vermelho","e.g. red sneakers"],
+ gateName:["房间名","Nome da sala","Room name"], gateNum:["号码","Número","Number"],
+ gateCount:["几个号码","Quantos números","How many numbers"], gateOpen:["生成号码","Gerar números","Make numbers"],
+ gateCopyAll:["复制全部","Copiar tudo","Copy all"], gateClose:["关门","Fechar a porta","Close the door"],
+ gateTap:["点号码就能复制一条完整的入场说明，发给那个人。","Toque num número para copiar a mensagem de entrada para essa pessoa.","Tap a number to copy an entry message for that person."],
+ gateLeft:["还剩 {0} 个名额。","Restam {0} vagas.","{0} places left."],
+ gateShut:["这个房间已经关门了（号码用完、过期，或者号码输错太多次）。","Esta sala já fechou (números esgotados, expirou ou muitas tentativas erradas).","This room is closed (numbers used up, expired, or too many wrong tries)."],
+ gateTaken:["这个房间名现在有人在用，换一个吧。","Esse nome está em uso agora. Escolha outro.","That room name is in use right now. Pick another."],
+ gateNeedName:["先起一个房间名，或者点 🎲。","Dê um nome à sala ou toque em 🎲.","Name the room first, or tap 🎲."],
+ gateMsg:["进入「{0}」：打开 {1} ，房间名填「{2}」，号码 {3}。号码只能用一次。","Para entrar em «{0}»: abra {1}, nome da sala «{2}», número {3}. O número vale uma vez.","To join “{0}”: open {1}, room name “{2}”, number {3}. The number works once."],
+ haveGate:["我有房间名和号码","Tenho nome da sala e número","I have a room name and number"],
+ enterTitle:["凭号码入场","Entrar com número","Enter with a number"],
+ enterLead:["填上对方告诉你的房间名和号码。大小写和空格都没关系；如果房间名是 🎲 生成的，用中文（简繁都行）、拼音、葡语、德语或英语输入都可以。","Digite o nome da sala e o número que recebeu. Maiúsculas e espaços não importam; se o nome veio do 🎲, pode digitar em chinês, pinyin, português, alemão ou inglês.","Type the room name and number you were given. Capitals and spaces don't matter; if the name came from 🎲, you can type it in Chinese, pinyin, Portuguese, German or English."],
+ enterGo:["入场","Entrar","Enter"],
+ errGate:["房间名或号码不对，或者房间已经满员、过期。","Nome ou número incorreto, ou a sala já está cheia ou expirou.","Wrong room name or number, or the room is full or has expired."],
+ errNum:["号码是 4 位数字。","O número tem 4 dígitos.","The number has 4 digits."],
  spaceName:["空间名称","Nome do espaço","Space name"], password:["密码","Senha","Password"],
  pwHint:["至少 8 个字符。笔记会用这个密码在设备上加密，服务器看不到内容。密码忘了就打不开，请记好。","Pelo menos 8 caracteres. As notas são criptografadas no aparelho com esta senha; o servidor não vê o conteúdo. Sem a senha não dá para abrir.","At least 8 characters. Notes are encrypted on your device with this password; the server can't read them. Without it the space can't be opened."],
  create:["创建","Criar","Create"], yourLink:["你们的专属链接","O link de vocês","Your private link"], copy:["复制","Copiar","Copy"], copied:["已复制","Copiado","Copied"],
@@ -532,7 +592,7 @@ function applyChange(kind,d){
 
 /* ---------- views ---------- */
 let KEYBITS=null;
-function show(v){ ["create","join","nokey","room"].forEach(x=>$("#v-"+x).hidden=x!==v); $("#b-hist").hidden=$("#b-leave").hidden=$("#b-inv").hidden=v!=="room"; }
+function show(v){ ["create","join","enter","nokey","room"].forEach(x=>$("#v-"+x).hidden=x!==v); $("#b-hist").hidden=$("#b-leave").hidden=$("#b-inv").hidden=v!=="room"; }
 function roomFromHash(){ const m=location.hash.match(/[#&]r=([a-z0-9]{12,40})/); return m?m[1]:null; }
 function inviteFromHash(){ const m=location.hash.match(/[#&]i=([A-Za-z0-9_-]{16,64})/); return m?m[1]:null; }
 const savedRoom=r=>{ try{ return JSON.parse(localStorage.getItem("ponte-room-"+r)||"null"); }catch(e){ return null; } };
@@ -544,6 +604,7 @@ $$("[data-pick]").forEach(g=>g.addEventListener("click",e=>{ const b=e.target.cl
 async function boot(){
   applyUI();
   if(inviteFromHash()){ show("join"); prefill("j","#j-name"); return; }
+  if(/^#enter\b/.test(location.hash)){ showEnter(); return; }
   ROOM=roomFromHash();
   if(!ROOM){ let last=null; try{ last=localStorage.getItem("ponte-last"); }catch(e){} if(last&&savedRoom(last)){ location.hash="r="+last; return; } show("create"); prefill("c","#c-me"); return; }
   const sv=savedRoom(ROOM);
@@ -596,8 +657,91 @@ function saveQR(){ const url=$("#i-link").value; if(!url) return; const q=qrOf(u
   for(let r=0;r<n;r++) for(let k=0;k<n;k++) if(q.isDark(r,k)) g.fillRect(pad+k*cell,pad+r*cell,cell,cell);
   g.fillStyle="#333"; g.font="600 24px system-ui,sans-serif"; g.textAlign="center"; g.fillText("桥 · Ponte",size/2,size+24);
   c.toBlob(b=>{ const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="ponte-invite-qr.png"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); },"image/png"); }
-async function openInvite(){ $("#m-inv").hidden=false; $("#i-link").value=""; $("#i-err").textContent=""; showQR(""); try{ $("#i-link").value=await makeInvite(); showQR($("#i-link").value); }catch(e){ console.warn(e); $("#i-err").textContent=t("errNet"); } }
+async function openInvite(){ $("#m-inv").hidden=false; gateRender(); $("#i-link").value=""; $("#i-err").textContent=""; showQR(""); try{ $("#i-link").value=await makeInvite(); showQR($("#i-link").value); }catch(e){ console.warn(e); $("#i-err").textContent=t("errNet"); } }
 $("#i-qrsave").addEventListener("click",saveQR);
+
+/* ---------- room name + number ("红色跑鞋 · 2255") ----------
+   The name is canonicalised (case, accents, spaces; the 128 dice words also match across 中文/拼音/PT/DE/EN and 繁體),
+   stretched with PBKDF2 into a gate id; each number gives its own id + AES key that wraps the space key.
+   The server hands each wrapped key out once, locks the gate after 10 wrong numbers, and closes it when all are used. */
+const WORDS=[[["苹果","蘋果"],["pingguo"],["maçã"],["Apfel"],["apple"]],[["香蕉"],["xiangjiao"],["banana"],["Banane"],["banana"]],[["橙子"],["chengzi"],["laranja"],["Orange"],["orange"]],[["葡萄"],["putao"],["uva"],["Traube","Weintraube"],["grape"]],[["草莓"],["caomei"],["morango"],["Erdbeere"],["strawberry"]],[["西瓜"],["xigua"],["melancia"],["Wassermelone"],["watermelon"]],[["桃子"],["taozi"],["pêssego"],["Pfirsich"],["peach"]],[["梨"],["li"],["pera"],["Birne"],["pear"]],[["柠檬","檸檬"],["ningmeng"],["limão"],["Zitrone"],["lemon"]],[["樱桃","櫻桃"],["yingtao"],["cereja"],["Kirsche"],["cherry"]],[["菠萝","菠蘿"],["boluo"],["abacaxi"],["Ananas"],["pineapple"]],[["芒果"],["mangguo"],["manga"],["Mango"],["mango"]],[["椰子"],["yezi"],["coco"],["Kokosnuss","Kokos"],["coconut"]],[["李子"],["lizi"],["ameixa"],["Pflaume"],["plum"]],[["猕猴桃","獼猴桃"],["mihoutao"],["kiwi"],["Kiwi"],["kiwi"]],[["荔枝"],["lizhi"],["lichia"],["Litschi"],["lychee","litchi"]],[["青椒"],["qingjiao"],["pimentão"],["Paprika"],["pepper","greenpepper","bellpepper"]],[["土豆"],["tudou"],["batata"],["Kartoffel"],["potato"]],[["番茄","西红柿","西紅柿"],["fanqie","xihongshi"],["tomate"],["Tomate"],["tomato"]],[["胡萝卜","胡蘿蔔"],["huluobo"],["cenoura"],["Karotte","Möhre"],["carrot"]],[["洋葱","洋蔥"],["yangcong"],["cebola"],["Zwiebel"],["onion"]],[["黄瓜","黃瓜"],["huanggua"],["pepino"],["Gurke"],["cucumber"]],[["南瓜"],["nangua"],["abóbora"],["Kürbis"],["pumpkin"]],[["蘑菇"],["mogu"],["cogumelo"],["Pilz"],["mushroom"]],[["白菜"],["baicai"],["repolho"],["Kohl"],["cabbage"]],[["玉米"],["yumi"],["milho"],["Mais"],["corn"]],[["大蒜"],["dasuan"],["alho"],["Knoblauch"],["garlic"]],[["生姜","姜","生薑"],["shengjiang","jiang"],["gengibre"],["Ingwer"],["ginger"]],[["豆腐"],["doufu"],["tofu"],["Tofu"],["tofu"]],[["茄子"],["qiezi"],["berinjela"],["Aubergine"],["eggplant","aubergine"]],[["菠菜"],["bocai"],["espinafre"],["Spinat"],["spinach"]],[["豌豆"],["wandou"],["ervilha"],["Erbse"],["pea","peas"]],[["米饭","米飯"],["mifan"],["arroz"],["Reis"],["rice"]],[["面条","麵條","麪條"],["miantiao"],["macarrão"],["Nudeln","Nudel"],["noodles","noodle"]],[["面包","麵包","麪包"],["mianbao"],["pão"],["Brot"],["bread"]],[["饺子","餃子"],["jiaozi"],["guioza"],["Teigtasche"],["dumpling","dumplings"]],[["鸡蛋","雞蛋"],["jidan"],["ovo"],["Ei"],["egg"]],[["奶酪","乳酪"],["nailao"],["queijo"],["Käse"],["cheese"]],[["牛奶"],["niunai"],["leite"],["Milch"],["milk"]],[["蜂蜜"],["fengmi"],["mel"],["Honig"],["honey"]],[["巧克力"],["qiaokeli"],["chocolate"],["Schokolade"],["chocolate"]],[["蛋糕"],["dangao"],["bolo"],["Kuchen"],["cake"]],[["饼干","餅乾"],["binggan"],["biscoito","bolacha"],["Keks"],["cookie","biscuit"]],[["冰淇淋"],["bingqilin"],["sorvete"],["Eis","Eiscreme"],["icecream"]],[["汤","湯"],["tang"],["sopa"],["Suppe"],["soup"]],[["茶"],["cha"],["chá"],["Tee"],["tea"]],[["咖啡"],["kafei"],["café"],["Kaffee"],["coffee"]],[["果汁"],["guozhi"],["suco"],["Saft"],["juice"]],[["盐","鹽"],["yan"],["sal"],["Salz"],["salt"]],[["黄油","黃油"],["huangyou"],["manteiga"],["Butter"],["butter"]],[["披萨","披薩"],["pisa"],["pizza"],["Pizza"],["pizza"]],[["猫","貓"],["mao"],["gato"],["Katze"],["cat"]],[["狗"],["gou"],["cachorro","cão"],["Hund"],["dog"]],[["熊猫","熊貓"],["xiongmao"],["panda"],["Panda"],["panda"]],[["兔子"],["tuzi"],["coelho"],["Hase","Kaninchen"],["rabbit","bunny"]],[["老虎"],["laohu"],["tigre"],["Tiger"],["tiger"]],[["狮子","獅子"],["shizi"],["leão"],["Löwe"],["lion"]],[["大象"],["daxiang"],["elefante"],["Elefant"],["elephant"]],[["猴子"],["houzi"],["macaco"],["Affe"],["monkey"]],[["马","馬"],["ma"],["cavalo"],["Pferd"],["horse"]],[["牛"],["niu"],["vaca"],["Kuh"],["cow"]],[["羊"],["yang"],["ovelha"],["Schaf"],["sheep"]],[["猪","豬"],["zhu"],["porco"],["Schwein"],["pig"]],[["鸡","雞"],["ji"],["galinha"],["Huhn"],["chicken"]],[["鸭子","鴨子"],["yazi"],["pato"],["Ente"],["duck"]],[["鱼","魚"],["yu"],["peixe"],["Fisch"],["fish"]],[["鸟","鳥"],["niao"],["pássaro"],["Vogel"],["bird"]],[["蝴蝶"],["hudie"],["borboleta"],["Schmetterling"],["butterfly"]],[["蜜蜂"],["mifeng"],["abelha"],["Biene"],["bee"]],[["乌龟","烏龜"],["wugui"],["tartaruga"],["Schildkröte"],["turtle"]],[["海豚"],["haitun"],["golfinho"],["Delfin","Delphin"],["dolphin"]],[["鲸鱼","鯨魚"],["jingyu"],["baleia"],["Wal"],["whale"]],[["狐狸"],["huli"],["raposa"],["Fuchs"],["fox"]],[["熊"],["xiong"],["urso"],["Bär"],["bear"]],[["企鹅","企鵝"],["qie"],["pinguim"],["Pinguin"],["penguin"]],[["长颈鹿","長頸鹿"],["changjinglu"],["girafa"],["Giraffe"],["giraffe"]],[["青蛙"],["qingwa"],["sapo"],["Frosch"],["frog"]],[["蜗牛","蝸牛"],["woniu"],["caracol"],["Schnecke"],["snail"]],[["松鼠"],["songshu"],["esquilo"],["Eichhörnchen"],["squirrel"]],[["猫头鹰","貓頭鷹"],["maotouying"],["coruja"],["Eule"],["owl"]],[["月亮"],["yueliang"],["lua"],["Mond"],["moon"]],[["太阳","太陽"],["taiyang"],["sol"],["Sonne"],["sun"]],[["星星"],["xingxing"],["estrela"],["Stern"],["star"]],[["云","雲"],["yun"],["nuvem"],["Wolke"],["cloud"]],[["彩虹"],["caihong"],["arco-íris"],["Regenbogen"],["rainbow"]],[["雪"],["xue"],["neve"],["Schnee"],["snow"]],[["山"],["shan"],["montanha"],["Berg"],["mountain"]],[["河"],["he"],["rio"],["Fluss"],["river"]],[["大海"],["dahai"],["mar"],["Meer"],["sea","ocean"]],[["森林"],["senlin"],["floresta"],["Wald"],["forest"]],[["花"],["hua"],["flor"],["Blume"],["flower"]],[["树","樹"],["shu"],["árvore"],["Baum"],["tree"]],[["竹子"],["zhuzi"],["bambu"],["Bambus"],["bamboo"]],[["石头","石頭"],["shitou"],["pedra"],["Stein"],["stone","rock"]],[["岛","島"],["dao"],["ilha"],["Insel"],["island"]],[["风","風"],["feng"],["vento"],["Wind"],["wind"]],[["雨伞","雨傘"],["yusan"],["guarda-chuva"],["Regenschirm"],["umbrella"]],[["书本","书","書本","書"],["shuben"],["livro"],["Buch"],["book"]],[["铅笔","鉛筆"],["qianbi"],["lápis"],["Bleistift"],["pencil"]],[["钥匙","鑰匙"],["yaoshi"],["chave"],["Schlüssel"],["key"]],[["杯子"],["beizi"],["copo","xícara"],["Tasse","Becher"],["cup","mug"]],[["椅子"],["yizi"],["cadeira"],["Stuhl"],["chair"]],[["桌子"],["zhuozi"],["mesa"],["Tisch"],["table"]],[["窗户","窗戶"],["chuanghu"],["janela"],["Fenster"],["window"]],[["灯笼","燈籠"],["denglong"],["lanterna"],["Laterne"],["lantern"]],[["风筝","風箏"],["fengzheng"],["pipa"],["Drachen"],["kite"]],[["气球","氣球"],["qiqiu"],["balão"],["Ballon","Luftballon"],["balloon"]],[["帽子"],["maozi"],["chapéu"],["Hut","Mütze"],["hat"]],[["鞋子"],["xiezi"],["sapato"],["Schuh"],["shoe","shoes"]],[["眼镜","眼鏡"],["yanjing"],["óculos"],["Brille"],["glasses"]],[["钟","鍾"],["zhong"],["relógio"],["Uhr"],["clock"]],[["自行车","腳踏車","自行車"],["zixingche"],["bicicleta"],["Fahrrad"],["bicycle","bike"]],[["火车","火車"],["huoche"],["trem"],["Zug"],["train"]],[["飞机","飛機"],["feiji"],["avião"],["Flugzeug"],["airplane","plane"]],[["船"],["chuan"],["barco"],["Boot","Schiff"],["boat","ship"]],[["汽车","汽車"],["qiche"],["carro"],["Auto"],["car"]],[["吉他"],["jita"],["violão"],["Gitarre"],["guitar"]],[["钢琴","鋼琴"],["gangqin"],["piano"],["Klavier"],["piano"]],[["鼓"],["gu"],["tambor"],["Trommel"],["drum"]],[["蜡烛","蠟燭"],["lazhu"],["vela"],["Kerze"],["candle"]],[["枕头","枕頭"],["zhentou"],["travesseiro"],["Kissen"],["pillow"]],[["镜子","鏡子"],["jingzi"],["espelho"],["Spiegel"],["mirror"]],[["篮子","籃子"],["lanzi"],["cesta"],["Korb"],["basket"]],[["信封"],["xinfeng"],["envelope"],["Umschlag","Briefumschlag"],["envelope"]],[["地图","地圖"],["ditu"],["mapa"],["Karte","Landkarte"],["map"]],[["礼物","禮物"],["liwu"],["presente"],["Geschenk"],["gift","present"]],[["足球"],["zuqiu"],["futebol"],["Fußball"],["football","soccer"]],[["桥","橋"],["qiao"],["ponte"],["Brücke"],["bridge"]]];
+const nrm=s=>String(s||"").toLowerCase().replace(/ß/g,"ss").normalize("NFD").replace(/\p{M}/gu,"").replace(/[^\p{L}\p{N}]/gu,"");
+const WN=new Map(); WORDS.forEach((r,i)=>r.flat().forEach(v=>WN.set(nrm(v),i))); const WMAX=Math.max(...[...WN.keys()].map(k=>k.length));
+function segs(name){ const x=nrm(name), out=[]; let i=0; while(i<x.length){ let L=Math.min(WMAX,x.length-i), hit=-1; for(;L>0;L--){ const k=x.slice(i,i+L); if(WN.has(k)){ hit=WN.get(k); break; } } if(hit>=0){ out.push(hit); i+=L; } else { out.push(x[i]); i++; } } return out; }
+const canon=name=>segs(name).map(v=>typeof v==="number"?"#"+v+";":v).join("");
+function wordsOf(name){ const sg=segs(name); return sg.length&&sg.every(v=>typeof v==="number")?sg:null; }
+function describeName(name){ const w=wordsOf(name); if(!w) return ""; const li={zh:0,pt:2,de:3,en:4}; return ["zh","pt","de","en"].map(l=>w.map(i=>WORDS[i][li[l]][0]).join(l==="zh"?"":" ")).join(" · "); }
+function diceName(){ const a=Math.floor(Math.random()*WORDS.length); let b; do{ b=Math.floor(Math.random()*WORDS.length); }while(b===a);
+  const col={zh:0,pt:2,en:4}[UIL]??0; return [a,b].map(i=>WORDS[i][col][0]).join(col===0?"":" "); }
+async function gateKeys(name){
+  const base=await crypto.subtle.importKey("raw",te.encode(canon(name)),"PBKDF2",false,["deriveBits"]);
+  const seed=new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:te.encode("ponte-gate-v1"),iterations:150000},base,256));
+  return {seed,id:hex(await sha(seed,"|gate"))};
+}
+async function codeKeys(seed,num){ const c=await sha(seed,"|code|"+num);
+  return {id:hex(await sha(c,"|id")),key:await crypto.subtle.importKey("raw",await sha(c,"|wrap"),"AES-GCM",false,["encrypt","decrypt"])}; }
+const GateStore={
+  _l(){ try{ return JSON.parse(localStorage.getItem("ponte-gates")||"{}"); }catch(e){ return {}; } }, _s(v){ localStorage.setItem("ponte-gates",JSON.stringify(v)); },
+  async open(gate,owner,codes){ if(LOCAL){ const g=this._l(); if(g[gate]) throw new Error("taken"); g[gate]={owner,fails:0,codes:Object.fromEntries(codes.map(c=>[c.id,c.w]))}; this._s(g); return; }
+    const {error}=await sb().rpc("tandem_gate_open",{p_gate:gate,p_owner:owner,p_codes:codes,p_hours:24}); if(error) throw error; },
+  async enter(gate,code){ if(LOCAL){ const g=this._l(), x=g[gate]; if(!x) return null; const w=x.codes[code]; if(!w){ if(++x.fails>=10) delete g[gate]; this._s(g); return null; } delete x.codes[code]; if(!Object.keys(x.codes).length) delete g[gate]; this._s(g); return w; }
+    const {data,error}=await sb().rpc("tandem_gate_enter",{p_gate:gate,p_code:code}); if(error) throw error; return data||null; },
+  async status(gate,secret){ if(LOCAL){ const x=this._l()[gate]; return x&&x.owner===hex(new Uint8Array(await crypto.subtle.digest("SHA-256",te.encode(secret))))?Object.keys(x.codes).length:-1; }
+    const {data,error}=await sb().rpc("tandem_gate_status",{p_gate:gate,p_secret:secret}); if(error) throw error; return data; },
+  async close(gate,secret){ if(LOCAL){ const g=this._l(); delete g[gate]; this._s(g); return true; }
+    const {error}=await sb().rpc("tandem_gate_close",{p_gate:gate,p_secret:secret}); if(error) throw error; return true; }
+};
+const gateSaved=()=>{ try{ return JSON.parse(localStorage.getItem("ponte-gate-"+ROOM)||"null"); }catch(e){ return null; } };
+const gateSave=v=>{ try{ v?localStorage.setItem("ponte-gate-"+ROOM,JSON.stringify(v)):localStorage.removeItem("ponte-gate-"+ROOM); }catch(e){} };
+const enterURL=()=>location.origin+location.pathname+location.search+"#enter";
+const spaceName=()=>(R&&R.name&&R.name.v)||"桥 · Ponte";
+async function gateRender(){
+  const g=gateSaved(), err=$("#g-err"); err.textContent="";
+  $("#g-setup").hidden=!!g; $("#g-live").hidden=!g; if(!g) return;
+  $("#g-show").textContent=g.name; $("#g-tr").textContent=describeName(g.name);
+  $("#g-nums").innerHTML=g.nums.map(n=>`<button data-n="${n}">${n}</button>`).join("");
+  $("#g-left").textContent=t("gateTap");
+  try{ const left=await GateStore.status(g.gate,g.secret);
+    if(left<0){ gateSave(null); $("#g-setup").hidden=false; $("#g-live").hidden=true; err.textContent=t("gateShut"); return; }
+    $("#g-left").textContent=t("gateLeft",left)+" "+t("gateTap"); }catch(e){ console.warn(e); }
+}
+$("#g-dice").addEventListener("click",()=>{ $("#g-name").value=diceName(); });
+$("#g-open").addEventListener("click",async()=>{
+  const name=$("#g-name").value.trim(), n=+$("#g-count").value, err=$("#g-err"); err.textContent="";
+  if(!nrm(name)){ err.textContent=t("gateNeedName"); return; }
+  $("#g-open").disabled=true;
+  try{
+    const gk=await gateKeys(name), nums=new Set(); while(nums.size<n) nums.add(String(1000+Math.floor(Math.random()*9000)));
+    const payload=te.encode(JSON.stringify({room:ROOM,bits:b64(KEYBITS)})), codes=[];
+    for(const num of nums){ const ck=await codeKeys(gk.seed,num), iv=crypto.getRandomValues(new Uint8Array(12));
+      codes.push({id:ck.id,w:b64(iv)+"."+b64(await crypto.subtle.encrypt({name:"AES-GCM",iv},ck.key,payload))}); }
+    const secret=b64u(crypto.getRandomValues(new Uint8Array(24))), owner=hex(new Uint8Array(await crypto.subtle.digest("SHA-256",te.encode(secret))));
+    await GateStore.open(gk.id,owner,codes);
+    gateSave({name,nums:[...nums],gate:gk.id,secret}); $("#g-name").value=""; gateRender();
+  }catch(e){ console.warn(e); err.textContent=/taken/.test(e&&e.message||"")?t("gateTaken"):t("errNet"); }
+  finally{ $("#g-open").disabled=false; }
+});
+async function copyText(v){ try{ if(navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent)) await navigator.share({text:v}); else { await navigator.clipboard.writeText(v); toast(t("copied")); } }catch(e){} }
+$("#g-nums").addEventListener("click",e=>{ const b=e.target.closest("button[data-n]"), g=gateSaved(); if(!b||!g) return; copyText(t("gateMsg",spaceName(),enterURL(),g.name,b.dataset.n)); });
+$("#g-copyall").addEventListener("click",()=>{ const g=gateSaved(); if(!g) return; copyText(t("gateMsg",spaceName(),enterURL(),g.name,g.nums.join(" / "))); });
+$("#g-close").addEventListener("click",async()=>{ const g=gateSaved(); if(!g) return; try{ await GateStore.close(g.gate,g.secret); }catch(e){ console.warn(e); } gateSave(null); gateRender(); });
+
+function showEnter(){ if(!/^#enter\b/.test(location.hash)) history.replaceState(null,"","#enter"); show("enter"); prefill("e","#e-name"); }
+$("#c-enter").addEventListener("click",showEnter); $("#nk-enter").addEventListener("click",()=>{ ROOM=null; showEnter(); });
+$("#e-go").addEventListener("click",async()=>{
+  const gname=$("#e-gname").value, num=$("#e-num").value.replace(/\D/g,""), name=$("#e-name").value.trim(), learn=pickVal("e"), err=$("#e-err"); err.textContent="";
+  if(!nrm(gname)){ err.textContent=t("gateNeedName"); return; } if(num.length!==4){ err.textContent=t("errNum"); return; }
+  if(!name){ err.textContent=t("errName"); return; } if(!learn){ err.textContent=t("errLearn"); return; }
+  $("#e-go").disabled=true;
+  try{
+    const gk=await gateKeys(gname), ck=await codeKeys(gk.seed,num);
+    const wrapped=await GateStore.enter(gk.id,ck.id); if(!wrapped){ err.textContent=t("errGate"); return; }
+    const [a,b]=wrapped.split("."); const inv=JSON.parse(td.decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:unb64(a)},ck.key,unb64(b))));
+    ROOM=inv.room; const bits=unb64(inv.bits); remember(bits,{name,learn}); history.replaceState(null,"","#r="+ROOM);
+    await enterWith(bits,{name,learn});
+  }catch(e){ console.warn(e); err.textContent=t("errNet"); }
+  finally{ $("#e-go").disabled=false; }
+});
 $("#b-inv").addEventListener("click",openInvite); $("#i-new").addEventListener("click",openInvite);
 $("#i-close").addEventListener("click",()=>$("#m-inv").hidden=true);
 $("#i-copy").addEventListener("click",async()=>{ const v=$("#i-link").value; if(!v) return; try{ if(navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent)) await navigator.share({url:v}); else { await navigator.clipboard.writeText(v); toast(t("copied")); } }catch(e){ $("#i-link").select(); } });
