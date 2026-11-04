@@ -447,6 +447,7 @@ const T={
  partnerHere:["{0} 在空间里","{0} está no espaço","{0} is here"], partnerInCall:["{0} 已经在通话中","{0} já está na chamada","{0} is already in the call"],
  connecting:["正在连接…","Conectando…","Connecting…"], connected:["已连接","Conectado","Connected"], reconnecting:["连接断了，正在重连…","Conexão caiu, reconectando…","Connection lost, reconnecting…"],
  failed:["连不上对方。可能是网络防火墙挡住了，可以在「历次学习 → 高级」里填一个 TURN 服务器。","Não foi possível conectar. Talvez um firewall bloqueie; dá para configurar um servidor TURN em «Sessões → Avançado».","Couldn't connect. A firewall may be blocking it; you can add a TURN server under “Sessions → Advanced”."],
+ startsOff:["麦克风和摄像头现在都关着，点下面的按钮打开。","Microfone e câmera estão desligados. Toque nos botões abaixo para ligar.","Microphone and camera are off. Tap the buttons below to turn them on."],
  camIsOff:["摄像头关着","Câmera desligada","Camera off"],
  noCam:["打不开摄像头或麦克风。请在浏览器里允许访问，再试一次。","Não foi possível abrir câmera ou microfone. Permita o acesso no navegador e tente de novo.","Couldn't open camera or microphone. Allow access in the browser and try again."],
  youAlone:["只有你在这里","Só você está aqui","Only you are here"],
@@ -764,14 +765,15 @@ $("#b-leave").addEventListener("click",()=>{ if(!confirm(t("confirmLeave"))) ret
 
 /* ---------- presence + messages ---------- */
 function openBus(){ BUS=busOpen(K.id.slice(0,40),onMsg); presence(true); }
+const micOn=()=>{ const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0]; return !!(a&&a.enabled); };
 const camOn=()=>{ const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; return !!(v&&v.enabled); };
-function presence(ask){ send("here",{name:ME.name,learn:ME.learn,call:!!LOCALSTREAM,cam:camOn()||!!SCREEN,ask:!!ask}); }
+function presence(ask){ send("here",{name:ME.name,learn:ME.learn,call:!!LOCALSTREAM,cam:camOn()||!!SCREEN,mic:micOn(),ask:!!ask}); }
 function prunePeers(){ let ch=false; for(const [id,p] of PEERS) if(now()-p.seen>30000){ PEERS.delete(id); ch=true; if(PC&&PEER===id) closePC(); } if(ch){ renderPeople(); callUI(); } }
 function onMsg(m){ INQ=INQ.then(()=>handleMsg(m)).catch(e=>console.warn(e)); }
 async function handleMsg(m){
   if(!m||m.f===ME.id) return; let b; try{ b=await dec(m.e); }catch(e){ return; }
   const from=m.f;
-  if(b.type==="here"){ const was=PEERS.get(from); PEERS.set(from,{name:b.name,learn:b.learn,call:b.call,cam:!!b.cam,seen:now()}); if(!was||was.cam!==!!b.cam) callUI(); if(b.ask) presence(false);
+  if(b.type==="here"){ const was=PEERS.get(from); PEERS.set(from,{name:b.name,learn:b.learn,call:b.call,cam:!!b.cam,mic:!!b.mic,seen:now()}); if(!was||was.cam!==!!b.cam||was.mic!==!!b.mic) callUI(); if(b.ask) presence(false);
     if(!was){ renderPeople(); send("sync",{room:liteRoom()}); } else renderPeople();
     if(b.call&&LOCALSTREAM&&!PC) startPC(from); callUI(); return; }
   if(b.type==="bye"){ PEERS.delete(from); if(PEER===from) closePC(); renderPeople(); callUI(); return; }
@@ -804,7 +806,8 @@ function iceServers(){ const s=[{urls:["stun:stun.cloudflare.com:3478","stun:stu
 async function startCall(){
   try{ LOCALSTREAM=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:{width:{ideal:1280},height:{ideal:720},facingMode:"user"}}); }
   catch(e){ try{ LOCALSTREAM=await navigator.mediaDevices.getUserMedia({audio:true,video:false}); toast(t("noCam")); }catch(e2){ toast(t("noCam")); return; } }
-  const cam=LOCALSTREAM.getVideoTracks()[0]; if(cam) cam.enabled=false; // join with the camera off; turn it on with the camera button
+  // join with camera and microphone off; each person turns them on with the buttons
+  LOCALSTREAM.getTracks().forEach(tr=>tr.enabled=false); toast(t("startsOff"));
   const lv=$("#lv"); lv.srcObject=LOCALSTREAM; startVAD(LOCALSTREAM);
   presence(); for(const [id,p] of PEERS) if(p.call){ startPC(id); break; }
   callUI();
@@ -837,7 +840,7 @@ function closePC(){ if(PC){ try{ PC.close(); }catch(e){} } PC=null; PEER=null; c
 function hangup(){ stopVAD(); if(PC&&BUS) send("hang",{}); closePC(); if(SCREEN){ SCREEN.getTracks().forEach(x=>x.stop()); SCREEN=null; } if(LOCALSTREAM){ LOCALSTREAM.getTracks().forEach(x=>x.stop()); LOCALSTREAM=null; } $("#lv").srcObject=null; $("#lv").hidden=true; if(BUS) presence(); callUI(); }
 $("#b-call").addEventListener("click",startCall);
 $("#b-end").addEventListener("click",hangup);
-$("#b-mic").addEventListener("click",()=>{ const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0]; if(a){ a.enabled=!a.enabled; callUI(); } });
+$("#b-mic").addEventListener("click",()=>{ const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0]; if(a){ a.enabled=!a.enabled; presence(); callUI(); } });
 $("#b-cam").addEventListener("click",()=>{ const v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0]; if(v){ v.enabled=!v.enabled; presence(); callUI(); } });
 $("#b-scr").addEventListener("click",async()=>{
   if(SCREEN){ stopScreen(); return; }
@@ -856,7 +859,7 @@ function callUI(){
   $("#idle-w").textContent=inCall&&!PC?"":"";
   $("#cbar").hidden=!inCall;
   $("#cst").hidden=!PC; $("#cst").textContent=st==="failed"?t("failed"):st==="disconnected"?t("reconnecting"):live?t("connected"):t("connecting");
-  $("#rname").hidden=!live; $("#rname").textContent=peer?peer.name:"";
+  $("#rname").hidden=!live; $("#rname").textContent=peer?(peer.mic?"":"🔇 ")+peer.name:"";
   const a=LOCALSTREAM&&LOCALSTREAM.getAudioTracks()[0], v=LOCALSTREAM&&LOCALSTREAM.getVideoTracks()[0];
   $("#b-mic").innerHTML=a&&!a.enabled?ICON.micOff:ICON.mic; $("#b-mic").classList.toggle("off",!!(a&&!a.enabled));
   $("#lv").hidden=!inCall||!(SCREEN||(v&&v.enabled));
