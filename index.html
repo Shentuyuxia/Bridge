@@ -172,6 +172,10 @@ ul.items li.on{border-color:var(--acc)}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:14px;z-index:60;max-width:90vw}
 .sessbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .sessbar .t{font-weight:600}
+.qrbox{display:flex;gap:14px;align-items:center;margin:12px 0 4px;flex-wrap:wrap}
+#i-qr{background:#fff;padding:8px;border-radius:10px;border:1px solid rgba(0,0,0,.12);line-height:0}
+#i-qr svg{width:168px;height:168px;display:block}
+.qrside{flex:1;min-width:160px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 </style>
 </head>
 <body>
@@ -323,6 +327,8 @@ ul.items li.on{border-color:var(--acc)}
   <p class="small muted" data-i="invLead"></p>
   <div class="linkbox"><input type="text" id="i-link" readonly><button class="btn sm primary" id="i-copy"><span data-i="copy"></span></button></div>
   <div class="err" id="i-err"></div>
+  <div class="qrbox" id="i-qrbox" hidden><div id="i-qr" role="img" aria-label="QR"></div>
+    <div class="qrside"><p class="small muted" data-i="qrHint"></p><button class="btn sm" id="i-qrsave"><span data-i="qrSave"></span></button></div></div>
   <p class="small muted" data-i="invWarn"></p>
   <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button class="btn sm" id="i-new"><span data-i="invNew"></span></button><button class="btn sm" id="i-close"><span data-i="close"></span></button></div></div></div>
 <div class="toast" id="toast" hidden></div>
@@ -330,6 +336,7 @@ ul.items li.on{border-color:var(--acc)}
 <script src="vendor/supabase.js"></script>
 <script src="vendor/yjs.min.js"></script>
 <script src="vendor/printkit.js"></script>
+<script src="vendor/qrcode.js"></script>
 <script>
 (function(){
 "use strict";
@@ -357,6 +364,8 @@ const T={
  invLead:["这个链接只能用一次，7 天内有效。可以发给语伴或老师，也可以用在你自己的另一台设备（比如手机）上。","Vale uma vez, por 7 dias. Mande ao parceiro ou professor, ou use no seu outro aparelho (por ex. o celular).","Works once, for 7 days. Send it to your partner or teacher, or use it on your own other device (e.g. your phone)."],
  invWarn:["每个人、每台设备各用一个链接。如果对方说「链接已经用过了」，而不是他自己用的，说明链接被别人先打开了：请告诉我，可以换一把新钥匙。","Um link por pessoa e por aparelho. Se alguém disser «já foi usado» sem ter usado, outra pessoa abriu antes.","One link per person and device. If someone says “already used” but didn't use it, someone else opened it first."],
  invNew:["再生成一个","Gerar outro","Make another"],
+ qrHint:["对方用手机相机扫一下就能打开。二维码和链接是同一个，也只能用一次。","A outra pessoa abre escaneando com a câmera do celular. O QR é o mesmo link e também vale uma vez só.","They can open it by scanning with their phone camera. The QR code is the same link and also works only once."],
+ qrSave:["保存二维码图片","Salvar imagem do QR","Save QR image"],
  spaceName:["空间名称","Nome do espaço","Space name"], password:["密码","Senha","Password"],
  pwHint:["至少 8 个字符。笔记会用这个密码在设备上加密，服务器看不到内容。密码忘了就打不开，请记好。","Pelo menos 8 caracteres. As notas são criptografadas no aparelho com esta senha; o servidor não vê o conteúdo. Sem a senha não dá para abrir.","At least 8 characters. Notes are encrypted on your device with this password; the server can't read them. Without it the space can't be opened."],
  create:["创建","Criar","Create"], yourLink:["你们的专属链接","O link de vocês","Your private link"], copy:["复制","Copiar","Copy"], copied:["已复制","Copiado","Copied"],
@@ -578,7 +587,17 @@ async function makeInvite(){
   await Store.inviteCreate(ik.id,b64(iv)+"."+b64(ct));
   return location.origin+location.pathname+location.search+"#i="+b64u(secret);
 }
-async function openInvite(){ $("#m-inv").hidden=false; $("#i-link").value=""; $("#i-err").textContent=""; try{ $("#i-link").value=await makeInvite(); }catch(e){ console.warn(e); $("#i-err").textContent=t("errNet"); } }
+function qrOf(text){ const q=qrcode(0,"M"); q.addData(unescape(encodeURIComponent(text)),"Byte"); q.make(); return q; }
+function showQR(url){ const box=$("#i-qrbox"), el=$("#i-qr"); el.innerHTML=""; box.hidden=true; if(!url||typeof qrcode!=="function") return;
+  try{ el.innerHTML=qrOf(url).createSvgTag({cellSize:4,margin:0,scalable:true}); box.hidden=false; }catch(e){ console.warn(e); } }
+function saveQR(){ const url=$("#i-link").value; if(!url) return; const q=qrOf(url), n=q.getModuleCount(), cell=12, pad=4*cell, size=n*cell+pad*2;
+  const c=document.createElement("canvas"); c.width=size; c.height=size+56; const g=c.getContext("2d");
+  g.fillStyle="#fff"; g.fillRect(0,0,c.width,c.height); g.fillStyle="#000";
+  for(let r=0;r<n;r++) for(let k=0;k<n;k++) if(q.isDark(r,k)) g.fillRect(pad+k*cell,pad+r*cell,cell,cell);
+  g.fillStyle="#333"; g.font="600 24px system-ui,sans-serif"; g.textAlign="center"; g.fillText("桥 · Ponte",size/2,size+24);
+  c.toBlob(b=>{ const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="ponte-invite-qr.png"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); },"image/png"); }
+async function openInvite(){ $("#m-inv").hidden=false; $("#i-link").value=""; $("#i-err").textContent=""; showQR(""); try{ $("#i-link").value=await makeInvite(); showQR($("#i-link").value); }catch(e){ console.warn(e); $("#i-err").textContent=t("errNet"); } }
+$("#i-qrsave").addEventListener("click",saveQR);
 $("#b-inv").addEventListener("click",openInvite); $("#i-new").addEventListener("click",openInvite);
 $("#i-close").addEventListener("click",()=>$("#m-inv").hidden=true);
 $("#i-copy").addEventListener("click",async()=>{ const v=$("#i-link").value; if(!v) return; try{ if(navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent)) await navigator.share({url:v}); else { await navigator.clipboard.writeText(v); toast(t("copied")); } }catch(e){ $("#i-link").select(); } });

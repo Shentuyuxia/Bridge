@@ -10,7 +10,7 @@ A private language-exchange room for two: video call, a timer split by language,
 ## 怎么用
 
 1. 打开网站，填空间名称、你的名字、你在学的语言，点「创建」。
-2. 马上会弹出一个**一次性邀请链接**，发给语伴或老师。这个链接只能用一次，7 天内有效：对方点「接受邀请」后，他的设备就记住了钥匙，链接随即失效，别人再打开也进不来。
+2. 马上会弹出一个**一次性邀请链接**，发给语伴或老师。邀请窗口里同时有二维码，对方用手机相机扫一下就能打开，也可以点「保存二维码图片」存成 PNG 发出去。链接和二维码是同一个，都只能用一次，7 天内有效：对方点「接受邀请」后，他的设备就记住了钥匙，链接随即失效，别人再打开也进不来。
 3. 以后每台设备直接打开网站就进入。换新设备（比如你的手机）时，在空间里点「邀请」再生成一个新链接给自己用。
 4. 没有钥匙的设备打开空间链接，只会看到「这台设备还不能进入」。
 5. 点「开始视频通话」，两个人都点了以后自动接通。
@@ -43,6 +43,7 @@ index.html            整个应用
 vendor/supabase.js    supabase-js（MIT）
 vendor/yjs.min.js     Yjs 协同编辑（MIT，见 vendor/yjs-LICENSE）
 vendor/printkit.js    Word / PDF 导出（和 Entrelinhas、字里、栞 共用）
+vendor/qrcode.js      邀请二维码，qrcode-generator 1.4.4（MIT，© Kazuhiko Arase，许可证在文件开头）
 fonts/                Source Sans 3、Source Serif 4（SIL OFL 1.1）
 icon.svg, icon-*.png, manifest.webmanifest
 ```
